@@ -16,7 +16,7 @@ class CorsMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $allowedOrigins = ['http://localhost:3000'];
+        $allowedOrigins = ['http://localhost:3000','https://app.hadathah.org'];
         $origin = $request->headers->get('origin');
 
         if (in_array($origin, $allowedOrigins)) {
