@@ -7,6 +7,7 @@ use App\Http\Controllers\SaleRepController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DesignerController;
+use App\Http\Controllers\SocialRepController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,7 @@ Route::get('/dashboard', [DashboardController::class, 'index']);
 
 Route::apiResource('customers', CustomerController::class);
 Route::apiResource('sale-reps', SaleRepController::class);
+Route::apiResource('social-reps', SocialRepController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('products', ProductController::class);
 Route::apiResource('designers', DesignerController::class);
