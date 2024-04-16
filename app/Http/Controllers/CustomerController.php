@@ -41,8 +41,8 @@ class CustomerController extends Controller
             'notes' => 'nullable|string|max:255',
             'address' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:customers',
-            'contact_number' => 'required|string|min:10|max:11',
-            'gender' => 'required|in:ذكر,انثى',
+            'contact_number' => 'required|regex:/^01\d{9}$/',
+            'gender' => 'required|in:ذكر,أنثى',
             'city' => 'required|string|max:255',
             'country' => 'required|string|max:255',
         ]);
@@ -89,8 +89,9 @@ class CustomerController extends Controller
         'notes' => 'nullable|string|max:255',
         'address' => 'required|string|max:255',
         'email' => 'required|string|email|max:255',
-        'contact_number' => 'required|string|min:10|max:11',
-        'gender' => 'required|in:ذكر,انثى',
+        'contact_number' => 'required|regex:/^01\d{9}$/',
+        'contact_number' => 'required|regex:/^(\+?2)?01\d{9}$/',
+        'gender' => 'required|in:ذكر,أنثى',
         'city' => 'required|string|max:255',
         'country' => 'required|string|max:255',
     ]);
@@ -102,6 +103,23 @@ class CustomerController extends Controller
 }
 
 
+    /**
+     * Search for customers by name or email or contact number
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function searchCustomers(Request $request)
+    {
+        $search = $request->input('search');
+        $customers = Customer::where('name', 'like', '%' . $search . '%')
+            ->orWhere('email', 'like', '%' . $search . '%')
+            ->orWhere('contact_number', 'like', '%' . $search . '%')
+            ->get();
+
+        return response()->json($customers);
+    }
     /**
      * Remove the specified resource from storage.
      *

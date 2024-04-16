@@ -46,5 +46,8 @@ Route::apiResource('categories', CategoryController::class);
 Route::apiResource('products', ProductController::class);
 Route::apiResource('designers', DesignerController::class);
 
-    // Your routes here
+
+    // Search Routes
+    Route::get('/customers/search', [CustomerController::class, 'searchCustomers']);
+
 });

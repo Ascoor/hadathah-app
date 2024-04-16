@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Faker\Factory as Faker;
 
 use Illuminate\Support\Facades\DB;
 
@@ -13,78 +14,23 @@ class CustomerSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
-    {
-        $customers = [
-            [
-                'name' => 'فهد العتيبي',
-                'address' => 'شارع الملك فهد، الرياض',
-                'contact_number' => '0555000111',
-                'gender' => 'ذكر',
-                'email' => 'fahad.otb@example.com',
-                'city' => 'الرياض',
-                'country' => 'السعودية',
-                'notes' => '',
-            ],
-            [
-                'name' => 'سارة الفهد',
-                'address' => 'حي الخبر، الخبر',
-                'contact_number' => '0555000222',
-                'gender' => 'أنثى',
-                'email' => 'sarah.alfahd@example.com',
-                'city' => 'الخبر',
-                'country' => 'السعودية',
-                'notes' => '',
-            ],
-            [
-                'name' => 'أحمد الشهري',
-                'address' => 'حي النسيم، جدة',
-                'contact_number' => '0555000333',
-                'gender' => 'ذكر',
-                'email' => 'ahmed.alshahri@example.com',
-                'city' => 'جدة',
-                'country' => 'السعودية',
-                'notes' => '',
-            ],
-            // أضف العملاء الآخرين بنفس الطريقة ولكن باستخدام بيانات مختلفة
 
-            [
-                'name' => 'عبدالرحمن الشعران',
-                'address' => 'شارع السلام، الرياض',
-                'contact_number' => '0555000444',
-                'gender' => 'ذكر',
-                'email' => 'abdelrahman.alshearan@example.com',
-                'city' => 'الرياض',
-                'country' => 'السعودية',
-                'notes' => '',  
+public function run()
+{
+    $faker = Faker::create('ar_SA');
 
-            ],
-            ['name' => 'سارة سعيد', 
-            'email' => 'sarah.saeid@example.com',
-            'address' => 'شارع السلام، الرياض',
-            'contact_number' => '0555000555',
-            'gender' => 'أنثى',
-            'city' => 'الرياض',
+    for ($i = 0; $i < 500; $i++) {
+        DB::table('customers')->insert([
+            'name' => $faker->name,
+            'address' => $faker->address,
+            'contact_number' => $faker->unique()->phoneNumber,
+            'gender' => $faker->randomElement(['ذكر', 'أنثى']),
+            'email' => $faker->unique()->safeEmail,
+            'city' => $faker->city,
             'country' => 'السعودية',
-            'notes' => '',
-        ],
-        // أضف العملاء الآخرين بنفس الطريقة ولكن باستخدام بيانات مختلفة
-
-        [
-            'name' => 'صالح الشيخ',
-            'address' => 'شارع السلام، الرياض',
-            'contact_number' => '0555000666',
-            'gender' => 'ذكر',
-            'email' => 'saleh.alsheikh@example.com',
-            'city' => 'الرياض',
-            'country' => 'السعودية',
-            'notes' => '',
-            ]
-        ];
-
-
-        foreach ($customers as $customer) {
-            DB::table('customers')->insert($customer);
-        }
+            'notes' => $faker->realText(),
+        ]);
     }
+
+}
 }
