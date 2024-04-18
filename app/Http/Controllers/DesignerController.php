@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Design;
 use App\Models\Designer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -162,11 +163,25 @@ class DesignerController extends Controller
      */
 
 
-     public function destroy($id)
-     {
-         $designer = Designer::findOrFail($id);
-         $designer->delete();
-         
-         return response()->json(['message' => 'Designer deleted successfully']);
-     }
+ 
+public function destroy($id)
+{
+    $designer = Designer::findOrFail($id);
+
+    // Check if there is an image and delete it from storage
+    if ($designer->image) {
+        // Convert the URL or relative path to a proper storage path
+        $oldImagePath = str_replace('/storage', 'public', $designer->image);
+
+        // Delete the file if it exists
+        if (Storage::exists($oldImagePath)) {
+            Storage::delete($oldImagePath);
+        }
+    }
+
+    // Delete the designer record after removing the image
+    $designer->delete();
+
+    return response()->json(['message' => 'designer and associated image deleted successfully']);
+}
 }
