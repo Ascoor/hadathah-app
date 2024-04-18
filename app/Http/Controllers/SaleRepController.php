@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\SaleRep;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -43,34 +45,23 @@ class SaleRepController extends Controller
     $validatedData = $request->validate([
         'name' => 'required|string|max:255',
         'phone' => 'required|string|max:255|unique:sale_reps',
-        'email' => 'nullable|email|max:255|unique:sale_reps',
-        'password' => 'nullable|string|min:8',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+               'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
         'covered_areas' => 'required|string',
     ]);
 
-    $saleRep = SaleRep::create([
-        'name' => $validatedData['name'],
-        'phone' => $validatedData['phone'],
-        'email' => $validatedData['email'],
-        'password' => Hash::make($validatedData['password']),
-        'covered_areas' => $validatedData['covered_areas'],
-    ]);
+    $saleRep = new SaleRep();
+    $saleRep->name = $validatedData['name'];
+    $saleRep->phone = $validatedData['phone'];
+    $saleRep->covered_areas = $validatedData['covered_areas'];
 
     if ($request->hasFile('image')) {
-        // Ensure the directory exists
-        $directory = 'public/sale_reps';
-        Storage::makeDirectory($directory); // This will create the directory if it doesn't exist
-
-        // Store the image in the specified directory
-        $imagePath = $request->file('image')->store($directory);
-
-        // Save the URL to the image in the database
+        $imagePath = $request->file('image')->store('public/sale-reps');
         $saleRep->image = Storage::url($imagePath);
-        $saleRep->save(); // Don't forget to save the update
     }
 
-    return response()->json($saleRep, 201);
+    $saleRep->save();
+
+    return response()->json(['message' => 'saleRep created successfully.', 'saleRep' => $saleRep]);
 }
 
     /**
@@ -102,26 +93,56 @@ class SaleRepController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    
+    
+    public function update(Request $request, SaleRep $saleRep)
+{
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+    'phone' => 'required|string|max:255|unique:sale_reps',
+    'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+    'covered_areas' => 'required|string',
+    ]);
+    
+    // Use Arr::except to remove the 'image' key from the validated data array before updating the saleRep
+    $dataWithoutImage = Arr::except($validatedData, ['image']);
+    
+    // Update saleRep with the validated data (except the image)
+    $saleRep->update($dataWithoutImage);
 
-     public function update(Request $request, $id)
-     {
-         $saleRep = SaleRep::findOrFail($id);
- 
-         $validatedData = $request->validate([
-             'name' => 'required|string|max:255',
-             'phone' => 'required|string|max:255|unique:sale_reps,phone,' . $saleRep->id,
-             'email' => 'nullable|email|max:255|unique:sale_reps,email,' . $saleRep->id,
-             'password' => 'nullable|string|min:8',
-             'image' => 'nullable|string|max:255',
-             'covered_areas' => 'required|string',
-         ]);
- 
-         $saleRep->update($validatedData);
- 
-         return response()->json($saleRep);
-     }
- 
+    if ($request->hasFile('image')) {
+        try {
+            DB::beginTransaction();
+    
+            // Capture the old image path before updating
+            $oldImagePath = $saleRep->image ? str_replace('/storage', 'public', $saleRep->image) : null;
 
+            // Store the new image and update the saleRep's image attribute
+            $imagePath = $request->file('image')->store('public/sale-rep');
+            $saleRep->image = Storage::url($imagePath);
+    
+            // Save the saleRep with the new image path
+            $saleRep->save();
+    
+            // Delete the old image after the new image has been saved successfully
+            if ($oldImagePath) {
+                Storage::delete($oldImagePath);
+            }
+    
+            DB::commit();
+    
+            return response()->json(['message' => 'saleRep updated successfully.', 'saleRep' => $saleRep]);
+        } catch (\Exception $e) {
+            // If there's an error, rollback the transaction
+            DB::rollBack();
+            return response()->json(['message' => 'Failed to update the saleRep image', 'error' => $e->getMessage()], 500);
+        }
+    } else {
+        // If no image is part of the request, the other updates have already been saved
+        return response()->json(['message' => 'saleRep updated successfully without image update.', 'saleRep' => $saleRep]);
+    }
+}
     /**
      * Remove the specified resource from storage.
      *

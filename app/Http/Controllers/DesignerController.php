@@ -4,19 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Designer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class DesignerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        return response()->json(Designer::all());
+        $designers = Designer::all();
+        return response()->json($designers);
     }
 
     /**
@@ -36,41 +33,38 @@ class DesignerController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+     public function store(Request $request)
+{
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:255|unique:designers',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
+        'skills' => 'nullable|string',
+    ]);
 
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|min:10|max:11|unique:designers', // Corrected this line
-            'email' => 'nullable|email|max:255|unique:designers', // Ensure the table name is correct here as well
-            'password' => 'nullable|string|min:8',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
-            'skills' => 'required|string',
-        ]);
+    $designer = Designer::create([
+        'name' => $validatedData['name'],
+        'phone' => $validatedData['phone'],
+                
+        'skills' => $validatedData['skills'],
+    ]);
 
-        $designer = Designer::create([
-            'name' => $validatedData['name'],
-            'phone' => $validatedData['phone'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-            'skills' => $validatedData['skills'],
-        ]);
+    if ($request->hasFile('image')) {
+        // Ensure the directory exists
+        $directory = 'public/designers';
+        Storage::makeDirectory($directory); // This will create the directory if it doesn't exist
 
-        if ($request->hasFile('image')) {
-            // Ensure the directory exists
-            $directory = 'public/designers';
-            Storage::makeDirectory($directory); // This will create the directory if it doesn't exist
+        // Store the image in the specified directory
+        $imagePath = $request->file('image')->store($directory);
 
-            // Store the image in the specified directory
-            $imagePath = $request->file('image')->store($directory);
-
-            // Save the URL to the image in the database
-            $designer->image = Storage::url($imagePath);
-            $designer->save(); // Don't forget to save the update
-        }
-
-        return response()->json($designer, 201);
+        // Save the URL to the image in the database
+        $designer->image = Storage::url($imagePath);
+        $designer->save(); // Don't forget to save the update
     }
+
+    return response()->json($designer, 201);
+}
+
     /**
      * Display the specified resource.
      *
@@ -101,36 +95,78 @@ class DesignerController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-     public function update(Request $request, $id)
-
-     {
-        $designer = Designer::findOrFail($id); // التأكد من وجود المصمم
+    public function update(Request $request, Designer $designer)
+    {
+         $validatedData = $request->validate([
+             'name' => 'required|string|max:255',
+             'phone' => 'required|string|max:255|unique:designers,phone,' . $designer->id,
+             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
+             'skills' => 'nullable|string',
+         ]);
+ 
     
-        // التحقق من البيانات المرسلة
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' =>  'required|string|max:255|unique:designers,phone,' . $designer->id,
-            'email' => 'nullable|email|max:255|unique:designers,email,' . $designer->id,
+    // Use Arr::except to remove the 'image' key from the validated data array before updating the designer
+    $dataWithoutImage = Arr::except($validatedData, ['image']);
+    
+    // Update Designer with the validated data (except the image)
+    $designer->update($dataWithoutImage);
 
-            'image' => 'nullable|string|max:255',
-            'skills' => 'required|string',
-        ]);
+    if ($request->hasFile('image')) {
+        try {
+            DB::beginTransaction();
+    
+            // Capture the old image path before updating
+            $oldImagePath = $designer->image ? str_replace('/storage', 'public', $designer->image) : null;
 
-     
-    // تحديث بيانات المصمم
-    $designer->update($validatedData);
-
-    // إرجاع البيانات مع رمز حالة HTTP 200
-    return response()->json($designer, 200);
+            // Store the new image and update the designer's image attribute
+            $imagePath = $request->file('image')->store('public/designers');
+            $designer->image = Storage::url($imagePath);
+    
+            // Save the Designer with the new image path
+            $designer->save();
+    
+            // Delete the old image after the new image has been saved successfully
+            if ($oldImagePath) {
+                Storage::delete($oldImagePath);
+            }
+    
+            DB::commit();
+    
+            return response()->json(['message' => 'designer updated successfully.', 'designer' => $designer]);
+        } catch (\Exception $e) {
+            // If there's an error, rollback the transaction
+            DB::rollBack();
+            return response()->json(['message' => 'Failed to update the Designer image', 'error' => $e->getMessage()], 500);
+        }
+    } else {
+        // If no image is part of the request, the other updates have already been saved
+        return response()->json(['message' => 'Designer updated successfully without image update.', 'designer' => $designer]);
+    }
 }
+
+ 
+
+    /**
+     * Search the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
-    }
+
+
+     public function destroy($id)
+     {
+         $designer = Designer::findOrFail($id);
+         $designer->delete();
+         
+         return response()->json(['message' => 'Designer deleted successfully']);
+     }
 }

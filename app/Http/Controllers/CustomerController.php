@@ -109,17 +109,6 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-
-    public function searchCustomers(Request $request)
-    {
-        $search = $request->input('search');
-        $customers = Customer::where('name', 'like', '%' . $search . '%')
-            ->orWhere('email', 'like', '%' . $search . '%')
-            ->orWhere('contact_number', 'like', '%' . $search . '%')
-            ->get();
-
-        return response()->json($customers);
-    }
     /**
      * Remove the specified resource from storage.
      *

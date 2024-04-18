@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\SocialRep;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,17 +39,14 @@ class SocialRepController extends Controller
     $validatedData = $request->validate([
         'name' => 'required|string|max:255',
         'phone' => 'required|string|max:255|unique:sale_reps',
-        'email' => 'nullable|email|max:255|unique:sale_reps',
-        'password' => 'nullable|string|min:8',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
         'skills' => 'nullable|string',
     ]);
 
     $socialRep = SocialRep::create([
         'name' => $validatedData['name'],
         'phone' => $validatedData['phone'],
-        'email' => $validatedData['email'],
-        'password' => Hash::make($validatedData['password']),
+                
         'skills' => $validatedData['skills'],
     ]);
 
@@ -96,26 +95,57 @@ class SocialRepController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-
-     public function update(Request $request, $id)
-     {
-         $socialRep = SocialRep::findOrFail($id);
- 
+    
+    public function update(Request $request, SocialRep $socialRep)
+    {
          $validatedData = $request->validate([
              'name' => 'required|string|max:255',
              'phone' => 'required|string|max:255|unique:sale_reps,phone,' . $socialRep->id,
-             'email' => 'nullable|email|max:255|unique:sale_reps,email,' . $socialRep->id,
-             'password' => 'nullable|string|min:8',
-             'image' => 'nullable|string|max:255',
+             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
              'skills' => 'nullable|string',
          ]);
  
-         $socialRep->update($validatedData);
- 
-         return response()->json($socialRep);
-     }
- 
+    
+    // Use Arr::except to remove the 'image' key from the validated data array before updating the socialRep
+    $dataWithoutImage = Arr::except($validatedData, ['image']);
+    
+    // Update social rep with the validated data (except the image)
+    $socialRep->update($dataWithoutImage);
 
+    if ($request->hasFile('image')) {
+        try {
+            DB::beginTransaction();
+    
+            // Capture the old image path before updating
+            $oldImagePath = $socialRep->image ? str_replace('/storage', 'public', $socialRep->image) : null;
+
+            // Store the new image and update the socialRep's image attribute
+            $imagePath = $request->file('image')->store('public/social-reps');
+            $socialRep->image = Storage::url($imagePath);
+    
+            // Save the social rep with the new image path
+            $socialRep->save();
+    
+            // Delete the old image after the new image has been saved successfully
+            if ($oldImagePath) {
+                Storage::delete($oldImagePath);
+            }
+    
+            DB::commit();
+    
+            return response()->json(['message' => 'socialRep updated successfully.', 'socialRep' => $socialRep]);
+        } catch (\Exception $e) {
+            // If there's an error, rollback the transaction
+            DB::rollBack();
+            return response()->json(['message' => 'Failed to update the social rep image', 'error' => $e->getMessage()], 500);
+        }
+    } else {
+        // If no image is part of the request, the other updates have already been saved
+        return response()->json(['message' => 'social rep updated successfully without image update.', 'socialRep' => $socialRep]);
+    }
+}
+
+ 
     /**
      * Remove the specified resource from storage.
      *
