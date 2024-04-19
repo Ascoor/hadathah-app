@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\SaleRep;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class SaleRepController extends Controller
@@ -151,11 +151,27 @@ class SaleRepController extends Controller
      */
 
 
-     public function destroy($id)
+
+
+     public function destroy($id): JsonResponse
      {
          $saleRep = SaleRep::findOrFail($id);
+     
+         // Attempt to delete the associated image if it exists
+         if ($saleRep->image) {
+             $oldImagePath = str_replace('/storage', 'public', $saleRep->image);
+             if (Storage::exists($oldImagePath)) {
+                 $deleted = Storage::delete($oldImagePath);
+                 if (!$deleted) {
+                     return response()->json(['message' => 'Error deleting the image.'], 500);
+                 }
+             }
+         }
+     
+         // Delete the saleRep record
          $saleRep->delete();
-         
-         return response()->json(['message' => 'Sale rep deleted successfully']);
+     
+         return response()->json(['message' => 'Sale rep and associated image deleted successfully.']);
      }
+     
 }

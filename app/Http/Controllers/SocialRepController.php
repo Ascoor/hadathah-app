@@ -6,8 +6,9 @@ use App\Models\SocialRep;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+
+use Illuminate\Http\JsonResponse;
 
 class SocialRepController extends Controller
 {
@@ -153,12 +154,24 @@ class SocialRepController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-
-     public function destroy($id)
+     public function destroy($id): JsonResponse
      {
          $socialRep = SocialRep::findOrFail($id);
+     
+         // Attempt to delete the associated image if it exists
+         if ($socialRep->image) {
+             $oldImagePath = str_replace('/storage', 'public', $socialRep->image);
+             if (Storage::exists($oldImagePath)) {
+                 $deleted = Storage::delete($oldImagePath);
+                 if (!$deleted) {
+                     return response()->json(['message' => 'Error deleting the image.'], 500);
+                 }
+             }
+         }
+     
+         // Delete the socialRep$socialRep record
          $socialRep->delete();
-         
-         return response()->json(['message' => 'Sale rep deleted successfully']);
+     
+         return response()->json(['message' => 'social rep and associated image deleted successfully.']);
      }
 }
