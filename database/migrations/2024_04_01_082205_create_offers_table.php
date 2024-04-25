@@ -21,9 +21,9 @@ return new class extends Migration
             $table->unsignedBigInteger('sale_rep_id');
             $table->dateTime('offer_date');
             $table->json('products');
-            $table->decimal('total_price', 10, 2);
-            $table->decimal('tax_amount', 10, 2)->default(0);
-            $table->decimal('discount_amount', 10, 2)->default(0);
+            $table->decimal('total', 10, 2);
+            $table->decimal('tax_rate', 10, 2)->default(0);
+            $table->decimal('discount_rate', 10, 2)->default(0);
             $table->decimal('total_final', 10, 2);
             $table->string('payment_method')->default('cash');
             $table->string('transaction_id')->nullable();
