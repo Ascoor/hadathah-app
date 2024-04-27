@@ -22,38 +22,33 @@ class OfferController extends Controller
     {
         //
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */public function store(Request $request)
-{
-    $data = $request->validate([
-        'offer_number' => 'required|string|unique:offers',
-        'customer_id' => 'required|exists:customers,id',
-        'sale_rep_id' => 'required|exists:sale_reps,id',
-        'offer_date' => 'required|date',
-        'products' => 'required|json',
-        'total' => 'required|numeric',
-        'tax_rate' => 'required|numeric',
-        'discount_rate' => 'required|numeric',
-        'total_final' => 'required|numeric',
-        'payment_method' => 'required|string',
-        'transaction_id' => 'nullable|string',
-        'payment_amount' => 'nullable|numeric',
-        'payment_type' => 'required|string',
-        'is_active' => 'required|boolean',
-        'valid_until' => 'required|date',
-        'created_by' => 'required|exists:users,id',
-    ]);
-
-    $offer = new Offer($data);
-    $offer->products = json_decode($data['products'], true);
-    $offer->save();
-
-    return response()->json(['message' => 'Offer created successfully!', 'offer' => $offer]);
-}
-
-
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'offer_number' => 'required|string|unique:offers',
+            'customer_id' => 'required|exists:customers,id',
+            'sale_rep_id' => 'required|exists:sale_reps,id',
+            'offer_date' => 'required|date',
+            'products' => 'required|array',
+            'total' => 'required|numeric',
+            'tax_rate' => 'required|numeric',
+            'discount_rate' => 'required|numeric',
+            'total_final' => 'required|numeric',
+            'payment_method' => 'required|string',
+            'transaction_id' => 'nullable|string',
+            'payment_amount' => 'nullable|numeric',
+            'payment_type' => 'required|string',
+            'valid_until' => 'required|date',
+            'created_by' => 'required|exists:users,id',
+        ]);
+    
+        $offer = new Offer($data);
+        $offer->products = $data['products']; // Assuming products are stored as JSON in the database
+        $offer->save();
+    
+        return response()->json(['message' => 'Offer created successfully!', 'offer' => $offer]);
+    }
+    
     /**
      * Display the specified resource.
      */
