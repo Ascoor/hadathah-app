@@ -12,7 +12,10 @@ class OfferController extends Controller
      */
     public function index()
     {
-        //
+
+        $offers = Offer::all();
+        return response()->json($offers);
+
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Designer;
+use App\Models\Offer;
 use App\Models\Product;
 use App\Models\SaleRep;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class DashboardController extends Controller
             'products' => Product::count(),
             'designers' => Designer::count(),
             'sales' => SaleRep::count(),
+            'offers' => Offer::count(),
         ]);
 }
 }
