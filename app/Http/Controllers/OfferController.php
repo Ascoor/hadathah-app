@@ -39,7 +39,6 @@ class OfferController extends Controller
             'total_final' => 'required|numeric',
             'payment_method' => 'required|string',
             'transaction_id' => 'nullable|string',
-            'payment_amount' => 'nullable|numeric',
             'payment_type' => 'required|string',
             'valid_until' => 'required|date',
             'created_by' => 'required|exists:users,id',
