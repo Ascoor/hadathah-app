@@ -28,22 +28,30 @@ class AuthController extends Controller
 
         return response(['user' => $user, 'access_token' => $accessToken]);
     }
-
     public function login(Request $request)
     {
-        $loginData = $request->validate([
+        $request->validate([
             'email' => 'email|required',
             'password' => 'required'
         ]);
-
-        if (!auth()->attempt($loginData)) {
-            return response(['message' => 'Invalid Credentials']);
+    
+        // Check if the email exists in the database
+        $user = \App\Models\User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json(['message' => 'هذا البريد ليس مسجل كمستخدم'], 404);
         }
-
+    
+        // Attempt to authenticate with the provided credentials
+        if (!auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json(['message' => 'هناك خطأ في كلمة المرور أعد إدخال كلمة المرور وحاول مرة أخرى'], 401);
+        }
+    
+        // Create access token for the authenticated user
         $accessToken = auth()->user()->createToken('authToken')->accessToken;
-
+    
         return response(['user' => auth()->user(), 'access_token' => $accessToken]);
     }
+    
 
     public function logout(Request $request)
     {
