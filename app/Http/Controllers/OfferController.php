@@ -55,9 +55,14 @@ class OfferController extends Controller
      * Display the specified resource.
      */
     public function show(Offer $offer)
-    {
-        //
-    }
+{   
+    // Load offer data
+    $offerData = Offer::with('customer', 'saleRep', 'creator')->find($offer->id);
+
+
+    // Return the offer data with products in the response
+    return response()->json($offerData);
+}
 
     /**
      * Show the form for editing the specified resource.

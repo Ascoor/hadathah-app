@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone');
             $table->string('email')->nullable()->unique();
-            $table->string('password')->nullable();
+            $table->foreignId('password_id')->constrained('passwords');
+
             $table->string('image')->nullable(); // افتراض أن الصورة قد تكون فارغة
             $table->text('skills')->nullable(); // أو يمكنك استخدام `string` إذا كانت المناطق المغطاة قصيرة
             $table->timestamps(); // إنشاء `created_at` و `updated_at` تلقائيًا

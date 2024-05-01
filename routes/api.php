@@ -49,4 +49,5 @@ Route::apiResource('designers', DesignerController::class);
 Route::apiResource('offers', OfferController::class);
 
 
+
 });

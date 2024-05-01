@@ -47,9 +47,8 @@ class Offer extends Model
         {
             return $this->belongsTo(SaleRep::class, 'sale_rep_id');
         }
-
-    
-        public function creator()
+        
+                 public function creator()
         {
             return $this->belongsTo(User::class, 'created_by');
         }

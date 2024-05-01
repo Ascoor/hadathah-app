@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Seeder;use Illuminate\Support\Facades\Hash;
+use App\Models\Password; // Import the Password model
 use Illuminate\Support\Facades\DB;
 
 class SaleRepsTableSeeder extends Seeder
@@ -20,14 +21,27 @@ class SaleRepsTableSeeder extends Seeder
             ['يوسف النمير', '0587654321', 'yousef.alnamir@example.com', 'yousefPass', null, 'تبوك, العلا'],
             ['عبير المبارك', '0576543210', 'abeer.almubarak@example.com', 'abeer123', null, 'القصيم, حائل'],
             ['طارق الحربي', '0565432109', 'tariq.alharbi@example.com', 'tariq2024', null, 'المنطقة الشرقية, الرياض'],
+       
         ];
 
         foreach ($saleReps as $rep) {
+            // Check if the password already exists in the passwords table
+            $password = $rep[3];
+            $passwordModel = Password::where('password', Hash::make($password))->first();
+
+            // If the password doesn't exist, create a new record in the passwords table
+            if (!$passwordModel) {
+                $passwordModel = Password::create([
+                    'password' => Hash::make($password),
+                ]);
+            }
+
+            // Insert the sale rep record with the password ID
             DB::table('sale_reps')->insert([
                 'name' => $rep[0],
                 'phone' => $rep[1],
                 'email' => $rep[2],
-                'password' => bcrypt($rep[3]), // Remember to hash the password
+                'password_id' => $passwordModel->id, // Use the password ID
                 'image' => $rep[4],
                 'covered_areas' => $rep[5],
                 'created_at' => now(),

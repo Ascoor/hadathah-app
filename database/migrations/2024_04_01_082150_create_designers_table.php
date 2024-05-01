@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone');
             $table->string('email')->nullable()->unique();
-            $table->string('password')->nullable();
+            $table->foreignId('password_id')->constrained('passwords');
+
             $table->string('image')->nullable();
             $table->text('skills');
             $table->timestamps();
