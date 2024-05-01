@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleRepController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
@@ -48,6 +49,8 @@ Route::apiResource('products', ProductController::class);
 Route::apiResource('designers', DesignerController::class);
 Route::apiResource('offers', OfferController::class);
 
-
+//Roles Rutes
+Route::get('/roles', [RoleController::class, 'index']);
+Route::post('/roles', [RoleController::class, 'store']);
 
 });
