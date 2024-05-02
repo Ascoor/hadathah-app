@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Designer;
+use App\Models\Password;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DesignerController extends Controller
 {
@@ -33,39 +35,40 @@ class DesignerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-
-     public function store(Request $request)
-{
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'phone' => 'required|string|max:255|unique:designers',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
-        'skills' => 'nullable|string',
-    ]);
-
-    $designer = Designer::create([
-        'name' => $validatedData['name'],
-        'phone' => $validatedData['phone'],
-                
-        'skills' => $validatedData['skills'],
-    ]);
-
-    if ($request->hasFile('image')) {
-        // Ensure the directory exists
-        $directory = 'public/designers';
-        Storage::makeDirectory($directory); // This will create the directory if it doesn't exist
-
-        // Store the image in the specified directory
-        $imagePath = $request->file('image')->store($directory);
-
-        // Save the URL to the image in the database
-        $designer->image = Storage::url($imagePath);
-        $designer->save(); // Don't forget to save the update
+    public function store(Request $request)
+    {
+        // Validate the request
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255|unique:designers',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+            'skills' => 'nullable|string',
+        ]);
+    
+        // Generate a secure random password
+        $password = Str::random(12); // Assuming you are using the Laravel helper Str::random
+    
+        // Store the password in the passwords table
+        $passwordEntry = Password::create(['password' => bcrypt($password)]);
+    
+        // Create the designer with the password_id
+        $designer = Designer::create([
+            'name' => $validatedData['name'],
+            'phone' => $validatedData['phone'],
+            'password_id' => $passwordEntry->id, // Store the password id in the designer record
+            'skills' => $validatedData['skills'],
+        ]);
+    
+        // Handle file upload if it exists
+        if ($request->hasFile('image')) {
+            $directory = 'public/designers';
+            Storage::makeDirectory($directory); // Ensure the directory exists
+            $imagePath = $request->file('image')->store($directory);
+            $designer->image = Storage::url($imagePath);
+            $designer->save(); // Save the update
+        }
     }
-
-    return response()->json($designer, 201);
-}
-
+    
     /**
      * Display the specified resource.
      *

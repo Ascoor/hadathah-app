@@ -38,6 +38,7 @@ class Offer extends Model
         ];
     
         // Relationships
+
         public function customer()
         {
             return $this->belongsTo(Customer::class);
