@@ -1,0 +1,42 @@
+name: Remote Build and Deploy on Laravel Update
+
+on:
+  push:
+    branches:
+      - master  # Triggers on pushes to the main branch.
+
+jobs:
+  laravel-update-and-deploy:
+    runs-on: ubuntu-latest  # Specifies the runner environment.
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2  # Checks out the repository code.
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'  # Specifies the PHP version to use.
+        extensions: mbstring, pdo_mysql  # Required extensions for Laravel.
+        tools: composer:v2  # Use Composer v2
+
+    - name: Connect to Remote Server and Run Update Commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOSTINGER_HOST }}
+        username: ${{ secrets.HOSTINGER_USERNAME }}
+        password: ${{ secrets.HOSTINGER_PASSWORD }}
+        port: ${{ secrets.SERVER_PORT }}
+        script: |
+          # Navigate to the Laravel project directory
+          cd /home/domains/hadathah.org/hadathah-app
+          # Composer update with interactive confirmation
+          echo 'yes' | composer update
+          # Run fresh migrations and seed database with interactive confirmation
+          echo 'yes' | php artisan migrate:fresh --seed
+          # Install Passport components with force option
+          php artisan passport:install --force
+          # Clear and cache configurations, routes, and views
+          php artisan optimize:clear
+          # Composer autoload optimization with interactive confirmation
+          echo 'yes' | composer dump-autoload
