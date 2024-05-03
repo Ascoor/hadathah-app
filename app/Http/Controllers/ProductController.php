@@ -44,7 +44,6 @@ class ProductController extends Controller
              'name' => 'required|string|max:255',
              'description' => 'nullable|string',
              'price' => 'required|numeric',
-             'stock' => 'nullable|integer',
              'category_id' => 'required|exists:categories,id',
              'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
          ]);
@@ -53,7 +52,6 @@ class ProductController extends Controller
          $product->name = $validatedData['name'];
          $product->description = $validatedData['description'];
          $product->price = $validatedData['price'];
-         $product->stock = $validatedData['stock'];
          $product->category_id = $validatedData['category_id'];
 
  
@@ -104,7 +102,6 @@ class ProductController extends Controller
         'name' => 'required|string|max:255',
         'description' => 'required|string',
         'price' => 'required|numeric',
-        'stock' => 'nullable|integer',
         'category_id' => 'required|exists:categories,id',
         'image' => 'nullable|image|max:2048', // Optional, but must be an image file if present
     ]);

@@ -12,9 +12,9 @@ class OfferController extends Controller
      */
     public function index()
     {
+        $offers = Offer::with('customer', 'saleRep', 'creator')->get();
+        return response()->json($offers);
 
-    $offers = Offer::all();
-    return response()->json($offers);
 
     }
 
