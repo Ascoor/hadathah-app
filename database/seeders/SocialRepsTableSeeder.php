@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class SocialRepsTableSeeder extends Seeder
 {
@@ -16,9 +17,9 @@ class SocialRepsTableSeeder extends Seeder
     {
         
 
-        \DB::table('social_reps')->delete();
+        DB::table('social_reps')->delete();
         
-        \DB::table('social_reps')->insert(array (
+        DB::table('social_reps')->insert(array (
             0 => 
             array (
                 'id' => 1,
@@ -26,10 +27,10 @@ class SocialRepsTableSeeder extends Seeder
                 'phone' => '0581234567',
                 'email' => NULL,
                 'password_id' => 33,
-                'image' => NULL,
+                'image' => '/storage/social-reps/FNKYVfPtuLHRmLpfYEQDGL01ZJTkPk0W8t4qUJvL.png',
                 'skills' => 'إدارة وسائل التواصل الاجتماعي, إنشاء المحتوى',
                 'created_at' => '2024-05-03 00:28:47',
-                'updated_at' => '2024-05-03 00:28:47',
+                'updated_at' => '2024-05-03 00:55:06',
             ),
             1 => 
             array (
@@ -38,10 +39,10 @@ class SocialRepsTableSeeder extends Seeder
                 'phone' => '0572345678',
                 'email' => NULL,
                 'password_id' => 34,
-                'image' => NULL,
+                'image' => '/storage/social-reps/f3OaCevlgerJ6ZitmGT3e6o7IawM4leIREHUITeA.png',
             'skills' => 'التسويق الرقمي, تحسين محركات البحث (SEO)',
                 'created_at' => '2024-05-03 00:28:48',
-                'updated_at' => '2024-05-03 00:28:48',
+                'updated_at' => '2024-05-03 00:58:09',
             ),
             2 => 
             array (
@@ -50,10 +51,10 @@ class SocialRepsTableSeeder extends Seeder
                 'phone' => '0563456789',
                 'email' => NULL,
                 'password_id' => 35,
-                'image' => NULL,
+                'image' => '/storage/social-reps/4duO5spngAB4SQzAY7HgGIlBXvqU6fODMVwRU35f.png',
                 'skills' => 'تصميم جرافيك, Adobe Photoshop',
                 'created_at' => '2024-05-03 00:28:48',
-                'updated_at' => '2024-05-03 00:28:48',
+                'updated_at' => '2024-05-03 00:58:20',
             ),
             3 => 
             array (

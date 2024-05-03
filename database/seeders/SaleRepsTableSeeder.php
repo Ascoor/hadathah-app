@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class SaleRepsTableSeeder extends Seeder
 {
@@ -16,9 +17,9 @@ class SaleRepsTableSeeder extends Seeder
     {
         
 
-        \DB::table('sale_reps')->delete();
+        DB::table('sale_reps')->delete();
         
-        \DB::table('sale_reps')->insert(array (
+        DB::table('sale_reps')->insert(array (
             0 => 
             array (
                 'id' => 1,
@@ -26,34 +27,34 @@ class SaleRepsTableSeeder extends Seeder
                 'phone' => '0567890123',
                 'email' => 'fahad.alghamdi@example.com',
                 'password_id' => 23,
-                'image' => NULL,
+                'image' => '/storage/sale-rep/XksAkZo9GDANOtFh9QAzDhgW14KaHHpwpvTisYii.png',
                 'covered_areas' => 'الرياض, جدة',
                 'created_at' => '2024-05-03 00:28:46',
-                'updated_at' => '2024-05-03 00:28:46',
+                'updated_at' => '2024-05-03 01:00:18',
             ),
             1 => 
             array (
                 'id' => 2,
                 'name' => 'سعود الشمري',
-                'phone' => '0556789012',
+                'phone' => '05452789012',
                 'email' => 'saud.alshammari@example.com',
                 'password_id' => 24,
-                'image' => NULL,
+                'image' => '/storage/sale-rep/XN9g5yRYwtkvrcU54kv0YFRoPN6JrsaNkPM60opP.png',
                 'covered_areas' => 'الدمام, الخبر',
                 'created_at' => '2024-05-03 00:28:46',
-                'updated_at' => '2024-05-03 00:28:46',
+                'updated_at' => '2024-05-03 01:03:09',
             ),
             2 => 
             array (
                 'id' => 3,
                 'name' => 'نورا الفيصل',
-                'phone' => '0545678901',
+                'phone' => '0522678901',
                 'email' => 'nora.alfaisal@example.com',
                 'password_id' => 25,
-                'image' => NULL,
+                'image' => '/storage/sale-rep/9Rn387Cas1nTvp8DQdQz56InbT1HCIfittvQLWYD.png',
                 'covered_areas' => 'مكة, المدينة',
                 'created_at' => '2024-05-03 00:28:46',
-                'updated_at' => '2024-05-03 00:28:46',
+                'updated_at' => '2024-05-03 01:03:25',
             ),
             3 => 
             array (
