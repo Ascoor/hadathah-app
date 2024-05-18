@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DesignerController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\SocialRepController;
+use App\Models\Offer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -52,5 +53,13 @@ Route::apiResource('offers', OfferController::class);
 //Roles Rutes
 Route::get('/roles', [RoleController::class, 'index']);
 Route::post('/roles', [RoleController::class, 'store']);
+
+
+// Offers Routes
+// routes/web.php
+
+
+
+Route::post('/offers/convert-offer/{offer}', [OfferController::class, 'convertToOrder']);
 
 });

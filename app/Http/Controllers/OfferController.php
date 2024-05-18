@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Offer;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller
@@ -64,13 +67,58 @@ class OfferController extends Controller
     return response()->json($offerData);
 }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Offer $offer)
-    {
-        //
+public function convertToOrder(Request $request, $offerId)
+{
+    $offer = Offer::findOrFail($offerId);
+
+    // Validate the request data
+    $request->validate([
+        'order_date' => 'required|date',
+        'products' => 'required|array',
+        'payment_method' => 'required|string',
+        'transaction_id' => 'nullable|string',
+        'created_by' => 'required|exists:users,id',
+        'order_type' => 'required|in:service,designs_and_prints,promotional_products' // Validate order type
+    ]);
+
+    $data = $request->all();
+
+    $order = new Order();
+    $order->offer_id = $offer->id;
+    $order->customer_id = $offer->customer_id;
+    $order->sale_rep_id = $offer->sale_rep_id;
+    $order->order_date = $data['order_date'];
+    $order->total = $offer->total;
+    $order->tax_rate = $offer->tax_rate;
+    $order->discount_rate = $offer->discount_rate;
+    $order->total_final = $offer->total_final;
+    $order->payment_method = $offer->payment_method;
+    $order->transaction_id = $offer->transaction_id;
+    $order->status = 'converted'; // Set status to converted
+    $order->created_by = $offer->created_by;
+    $order->order_type = $data['order_type']; // Set order type
+    $order->save();
+
+    // Update offer status to converted
+    $offer->status = 'converted';
+    $offer->save();
+
+    // Create order products
+    foreach ($data['products'] as $product) {
+        $orderProduct = new OrderProduct();
+        $orderProduct->order_id = $order->id;
+        $orderProduct->product_id = $product['product_id'];
+        $orderProduct->quantity = $product['quantity'];
+        $orderProduct->price = $product['price'];
+        $orderProduct->save();
     }
+
+    return response()->json([
+        'message' => 'Order created successfully',
+        'order' => $order,
+        'products' => $order->orderProducts,
+    ], 201);
+}
 
     /**
      * Update the specified resource in storage.
