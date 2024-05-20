@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Offer;
 use App\Models\Order;
-use App\Models\OrderDetail;
+use App\Models\OrderEmployee;
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 
@@ -41,9 +41,9 @@ class OfferController extends Controller
             'discount_rate' => 'required|numeric',
             'total_final' => 'required|numeric',
             'payment_method' => 'required|string',
-            'transaction_id' => 'nullable|string',
             'payment_type' => 'required|string',
             'valid_until' => 'required|date',
+            'time_plementation_range' => 'required|string',
             'created_by' => 'required|exists:users,id',
         ]);
     
@@ -76,7 +76,9 @@ public function convertToOrder(Request $request, $offerId)
         'order_date' => 'required|date',
         'products' => 'required|array',
         'payment_method' => 'required|string',
-        'transaction_id' => 'nullable|string',
+        'sale_rep_id' => 'nullable|string',
+        'designer_id' => 'nullable|string',
+        'soical_rep_id' => 'nullable|string',
         'created_by' => 'required|exists:users,id',
         'order_type' => 'required|in:service,designs_and_prints,promotional_products' // Validate order type
     ]);
@@ -86,14 +88,12 @@ public function convertToOrder(Request $request, $offerId)
     $order = new Order();
     $order->offer_id = $offer->id;
     $order->customer_id = $offer->customer_id;
-    $order->sale_rep_id = $offer->sale_rep_id;
     $order->order_date = $data['order_date'];
     $order->total = $offer->total;
     $order->tax_rate = $offer->tax_rate;
     $order->discount_rate = $offer->discount_rate;
     $order->total_final = $offer->total_final;
     $order->payment_method = $offer->payment_method;
-    $order->transaction_id = $offer->transaction_id;
     $order->status = 'converted'; // Set status to converted
     $order->created_by = $offer->created_by;
     $order->order_type = $data['order_type']; // Set order type
@@ -111,6 +111,14 @@ public function convertToOrder(Request $request, $offerId)
         $orderProduct->quantity = $product['quantity'];
         $orderProduct->price = $product['price'];
         $orderProduct->save();
+    }
+    foreach ($data['employees'] as $employee) {
+        $orderEmployee = new OrderEmployee();
+        $orderEmployee->order_id = $order->id;
+        $orderEmployee->designer_id = $employee['designer_id'];
+        $orderEmployee->sale_rep_id = $employee['sale_rep_id'];
+        $orderEmployee->social_rep_id= $employee['social_rep_id'];
+        $orderEmployee->save();
     }
 
     return response()->json([

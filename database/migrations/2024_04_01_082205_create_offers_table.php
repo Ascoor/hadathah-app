@@ -26,12 +26,11 @@ return new class extends Migration
             $table->decimal('discount_rate', 10, 2)->default(0);
             $table->decimal('total_final', 10, 2);
             $table->string('payment_method')->default('cash');
-            $table->string('transaction_id')->nullable();
             $table->string('offer_pdf_path')->nullable();
-            $table->decimal('payment_amount', 10, 2)->nullable();
             $table->string('payment_type')->default('full'); // Could be 'full' or 'partial'
             $table->boolean('is_active')->default(true);
             $table->dateTime('valid_until');
+            $table->string('time_plementation_range');
             $table->enum('status', ['active', 'inactive', 'converted'])->default('active');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();

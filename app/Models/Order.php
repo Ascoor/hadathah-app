@@ -11,8 +11,6 @@ class Order extends Model
     protected $fillable = [
         'offer_id',
         'customer_id',
-        'sale_rep_id',
-        'designer_id',
         'order_date',
         'order_type',
         'is_commission',
@@ -23,7 +21,7 @@ class Order extends Model
         'payment_status',
         'order_status',
         'updated_by',
-        'created_by',
+            'created_by',
     ];
 
     protected $casts = [

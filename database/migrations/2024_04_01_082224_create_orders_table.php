@@ -16,16 +16,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('offer_id')->constrained()->onDelete('cascade');
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
-            $table->foreignId('sale_rep_id')->constrained()->onDelete('cascade');
-            $table->foreignId('designer_id')->constrained()->onDelete('cascade');
             $table->date('order_date');
-            $table->enum('order_type', ['طباعة وتصميم', 'منتجات مطبوعة', 'خدمات', 'نشر وتسويق']);
+            $table->json('order_type');
             $table->boolean('is_commission')->default(0);
             $table->decimal('total', 10, 2);
             $table->decimal('tax_rate', 5, 2);
             $table->decimal('discount_rate', 5, 2);
             $table->decimal('total_final', 10, 2);
-            $table->enum('payment_status', ['سداد جزئي', 'مكتمل', 'فشل'])->default('سداد جزئي');
+            $table->enum('payment_status', ['سداد جزئي', 'غير مسدد','مكتمل', 'فشل'])->default('غير مسدد');
             $table->enum('order_status', ['طباعة', 'قيد التنفيذ', 'تحت الإنشاء', 'تم التسليم', 'ملغي'])->default('قيد التنفيذ');
             $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
