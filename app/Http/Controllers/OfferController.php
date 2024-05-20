@@ -76,11 +76,14 @@ public function convertToOrder(Request $request, $offerId)
         'order_date' => 'required|date',
         'products' => 'required|array',
         'payment_method' => 'required|string',
-        'sale_rep_id' => 'nullable|string',
-        'designer_id' => 'nullable|string',
-        'soical_rep_id' => 'nullable|string',
+        'payment_type' => 'required|string',
         'created_by' => 'required|exists:users,id',
-        'order_type' => 'required|in:service,designs_and_prints,promotional_products' // Validate order type
+        'order_type.*' => 'required|string|in:service,designs_and_prints,promotional_products,marketing',
+        'employees' => 'required|array',
+        'time_plementation_range' => 'required|string',
+        'employees.designer_id' => 'nullable|exists:designers,id',
+        'employees.sale_rep_id' => 'nullable|exists:sale_reps,id',
+        'employees.social_rep_id' => 'nullable|exists:social_reps,id',
     ]);
 
     $data = $request->all();
@@ -93,10 +96,13 @@ public function convertToOrder(Request $request, $offerId)
     $order->tax_rate = $offer->tax_rate;
     $order->discount_rate = $offer->discount_rate;
     $order->total_final = $offer->total_final;
-    $order->payment_method = $offer->payment_method;
-    $order->status = 'converted'; // Set status to converted
-    $order->created_by = $offer->created_by;
-    $order->order_type = $data['order_type']; // Set order type
+    $order->payment_method = $data['payment_method'];
+    $order->payment_type = $data['payment_type'];	
+    $order->time_plementation_range = $data['time_plementation_range'];
+ 
+    $order->created_by = $data['created_by'];
+    $order->order_type = json_encode($data['order_type']); // Save order types as JSON
+   
     $order->save();
 
     // Update offer status to converted
@@ -110,16 +116,17 @@ public function convertToOrder(Request $request, $offerId)
         $orderProduct->product_id = $product['product_id'];
         $orderProduct->quantity = $product['quantity'];
         $orderProduct->price = $product['price'];
+        $orderProduct->notes = $product['notes'];
         $orderProduct->save();
     }
-    foreach ($data['employees'] as $employee) {
-        $orderEmployee = new OrderEmployee();
-        $orderEmployee->order_id = $order->id;
-        $orderEmployee->designer_id = $employee['designer_id'];
-        $orderEmployee->sale_rep_id = $employee['sale_rep_id'];
-        $orderEmployee->social_rep_id= $employee['social_rep_id'];
-        $orderEmployee->save();
-    }
+
+    // Save employees related to the order
+    $orderEmployee = new OrderEmployee();
+    $orderEmployee->order_id = $order->id;
+    $orderEmployee->designer_id = $data['employees']['designer_id'];
+    $orderEmployee->sale_rep_id = $data['employees']['sale_rep_id'];
+    $orderEmployee->social_rep_id = $data['employees']['social_rep_id'];
+    $orderEmployee->save();
 
     return response()->json([
         'message' => 'Order created successfully',
@@ -127,7 +134,6 @@ public function convertToOrder(Request $request, $offerId)
         'products' => $order->orderProducts,
     ], 201);
 }
-
     /**
      * Update the specified resource in storage.
      */
