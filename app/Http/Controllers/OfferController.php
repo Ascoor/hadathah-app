@@ -43,7 +43,7 @@ class OfferController extends Controller
             'payment_method' => 'required|string',
             'payment_type' => 'required|string',
             'valid_until' => 'required|date',
-            'time_plementation_range' => 'required|string',
+            'time_plementation_range' => 'required|numeric',
             'created_by' => 'required|exists:users,id',
         ]);
     
