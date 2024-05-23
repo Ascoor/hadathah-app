@@ -19,6 +19,7 @@ class Order extends Model
         'discount_rate',
         'total_final',
         'payment_status',
+        'time_plementation_range',
         'order_status',
         'updated_by',
             'created_by',

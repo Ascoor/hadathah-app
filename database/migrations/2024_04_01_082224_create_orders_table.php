@@ -23,9 +23,13 @@ return new class extends Migration
             $table->decimal('tax_rate', 5, 2);
             $table->decimal('discount_rate', 5, 2);
             $table->decimal('total_final', 10, 2);
-            $table->enum('payment_status', ['سداد جزئي', 'غير مسدد','مكتمل', 'فشل'])->default('غير مسدد');
+            $table->string('payment_method');
+            $table->string('payment_type');
+            $table->string('time_plementation_range');
+
+                    $table->enum('payment_status', ['سداد جزئي', 'غير مسدد','مكتمل', 'فشل'])->default('غير مسدد');
             $table->enum('order_status', ['طباعة', 'قيد التنفيذ', 'تحت الإنشاء', 'تم التسليم', 'ملغي'])->default('قيد التنفيذ');
-            $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
