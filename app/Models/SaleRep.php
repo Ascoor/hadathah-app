@@ -17,4 +17,9 @@ class SaleRep extends Model
         'image',
         'covered_areas',
     ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

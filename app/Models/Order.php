@@ -10,6 +10,7 @@ class Order extends Model
 
     protected $fillable = [
         'offer_id',
+        'order_number',
         'customer_id',
         'order_date',
         'order_type',
@@ -45,16 +46,11 @@ class Order extends Model
     {
         return $this->belongsTo(Customer::class);
     }
-
-    public function saleRep()
+    public function employees()
     {
-        return $this->belongsTo(SaleRep::class, 'sale_rep_id');
+        return $this->hasOne(OrderEmployee::class);
     }
 
-    public function designer()
-    {
-        return $this->belongsTo(Designer::class, 'designer_id');
-    }
 
     public function creator()
     {
@@ -65,4 +61,5 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+    
 }

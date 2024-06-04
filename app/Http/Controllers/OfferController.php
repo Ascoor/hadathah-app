@@ -88,7 +88,18 @@ public function convertToOrder(Request $request, $offerId)
 
     $data = $request->all();
 
+    // Generate the order number
+    $lastOrderNumber = Order::max('order_number');
+    if ($lastOrderNumber) {
+        $numericPart = intval(substr($lastOrderNumber, 4));
+        $newNumericPart = str_pad($numericPart + 1, 6, '0', STR_PAD_LEFT);
+        $newOrderNumber = 'HT-' . $newNumericPart;
+    } else {
+        $newOrderNumber = 'HT-000001';
+    }
+
     $order = new Order();
+    $order->order_number = $newOrderNumber;
     $order->offer_id = $offer->id;
     $order->customer_id = $offer->customer_id;
     $order->order_date = $data['order_date'];
@@ -97,12 +108,10 @@ public function convertToOrder(Request $request, $offerId)
     $order->discount_rate = $offer->discount_rate;
     $order->total_final = $offer->total_final;
     $order->payment_method = $data['payment_method'];
-    $order->payment_type = $data['payment_type'];	
+    $order->payment_type = $data['payment_type'];
     $order->time_plementation_range = $data['time_plementation_range'];
- 
     $order->created_by = $data['created_by'];
     $order->order_type = json_encode($data['order_type']); // Save order types as JSON
-   
     $order->save();
 
     // Update offer status to converted
@@ -134,7 +143,7 @@ public function convertToOrder(Request $request, $offerId)
         'products' => $order->orderProducts,
     ], 201);
 }
-    /**
+/**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Offer $offer)

@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DesignerController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SocialRepController;
 use App\Models\Offer;
 use Illuminate\Http\Request;
@@ -49,6 +50,7 @@ Route::apiResource('categories', CategoryController::class);
 Route::apiResource('products', ProductController::class);
 Route::apiResource('designers', DesignerController::class);
 Route::apiResource('offers', OfferController::class);
+Route::apiResource('orders', OrderController::class);
 
 //Roles Rutes
 Route::get('/roles', [RoleController::class, 'index']);

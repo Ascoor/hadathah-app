@@ -10,7 +10,7 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = Order::with('offer', 'customer', 'saleRep', 'creator')->get();
+        $orders = Order::with( ['customer', 'employees.saleRep', 'employees.socialRep', 'employees.designer','creator'])->get();
         
         return response()->json($orders);
     }

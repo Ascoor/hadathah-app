@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('offer_id')->constrained()->onDelete('cascade');
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->string('order_number');
             $table->date('order_date');
             $table->json('order_type');
             $table->boolean('is_commission')->default(0);
@@ -28,7 +29,7 @@ return new class extends Migration
             $table->string('time_plementation_range');
 
                     $table->enum('payment_status', ['سداد جزئي', 'غير مسدد','مكتمل', 'فشل'])->default('غير مسدد');
-            $table->enum('order_status', ['طباعة', 'قيد التنفيذ', 'تحت الإنشاء', 'تم التسليم', 'ملغي'])->default('قيد التنفيذ');
+            $table->enum('order_status', [ 'قيد التنفيذ', 'قيد الإعداد','قيد الإنشاء', 'تم التسليم', 'ملغي'])->default('قيد الإعداد');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
