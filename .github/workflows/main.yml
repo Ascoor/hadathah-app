@@ -28,15 +28,18 @@ jobs:
         password: ${{ secrets.HOSTINGER_PASSWORD }}
         port: ${{ secrets.SERVER_PORT }}
         script: |
-          # Navigate to the Laravel project directory
           cd /var/www/html/hadathah.org/hadathah-app
-          # Composer update with interactive confirmation
-          echo 'yes' | composer update
+          # Stash any local changes
+          git stash
+          # Pull the latest changes from the master branch using SSH
+          git pull origin master
+          # Ensure all dependencies are installed.
+          composer install --no-interaction --prefer-dist
           # Run fresh migrations and seed database with interactive confirmation
-          echo 'yes' | php artisan migrate:fresh --seed
+          php artisan migrate:fresh --seed --force
           # Install Passport components with force option
           php artisan passport:install --force
           # Clear and cache configurations, routes, and views
           php artisan optimize:clear
-          # Composer autoload optimization with interactive confirmation
-          echo 'yes' | composer dump-autoload
+          # Composer autoload optimization
+          composer dump-autoload --no-interaction
