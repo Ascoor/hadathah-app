@@ -57,11 +57,9 @@ Route::get('/roles', [RoleController::class, 'index']);
 Route::post('/roles', [RoleController::class, 'store']);
 
 
-// Offers Routes
-// routes/web.php
 
 
-
+// Convert Offer To Order Route
 Route::post('/offers/convert-offer/{offer}', [OfferController::class, 'convertToOrder']);
 
 });
