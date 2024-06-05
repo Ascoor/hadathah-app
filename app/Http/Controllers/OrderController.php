@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -38,6 +39,17 @@ class OrderController extends Controller
                 'success' => false,
                 'message' => 'Order not found'
             ], 404);
+        }
+    }
+ 
+    public function getOrderDetails($orderId)
+    {
+        $orderDetails = OrderDetail::where('order_id', $orderId)->first();
+
+        if ($orderDetails) {
+            return response()->json($orderDetails);
+        } else {
+            return response()->json(['message' => 'Order details not found'], 404);
         }
     }
 }
