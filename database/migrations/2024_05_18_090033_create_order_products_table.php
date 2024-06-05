@@ -18,7 +18,9 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
             $table->decimal('price', 10, 2);
-            $table->string('notes')->nullable();
+            $table->string('notes')->nullable(); 
+             $table->enum('status', [ 'قيد التنفيذ', 'قيد الإعداد','تم', 'ملغي'])->default('قيد الإعداد');
+           
             $table->timestamps();
         });
     }

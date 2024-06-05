@@ -15,4 +15,11 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
+
+    public function show(Order $order)
+    {
+        $order = Order::with( ['customer', 'employees.saleRep', 'employees.socialRep','products', 'employees.designer','creator'])->find($order->id);
+        return response()->json($order);
+    }
+
 }
