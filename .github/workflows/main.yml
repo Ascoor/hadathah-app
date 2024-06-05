@@ -32,7 +32,7 @@ jobs:
           # Stash any local changes
           git stash
           # Pull the latest changes from the master branch using SSH
-          git pull origin master
+          git pull 
           # Ensure all dependencies are installed.
           composer install --no-interaction --prefer-dist
           # Run fresh migrations and seed database with interactive confirmation
