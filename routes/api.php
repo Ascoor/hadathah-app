@@ -56,9 +56,6 @@ Route::apiResource('orders', OrderController::class);
 Route::get('/roles', [RoleController::class, 'index']);
 Route::post('/roles', [RoleController::class, 'store']);
 
-
-
-
 // Convert Offer To Order Route
 Route::post('/offers/convert-offer/{offer}', [OfferController::class, 'convertToOrder']);
 
