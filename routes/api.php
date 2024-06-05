@@ -51,11 +51,14 @@ Route::apiResource('products', ProductController::class);
 Route::apiResource('designers', DesignerController::class);
 Route::apiResource('offers', OfferController::class);
 Route::apiResource('orders', OrderController::class);
-//Roles Rutes
-Route::get('/roles', [RoleController::class, 'index']);
-Route::post('/roles', [RoleController::class, 'store']);
+
 
 // Convert Offer To Order Route
 Route::post('/offers/convert-offer/{offer}', [OfferController::class, 'convertToOrder']);
+
+
+//Roles Rutes
+Route::get('/roles', [RoleController::class, 'index']);
+Route::post('/roles', [RoleController::class, 'store']);
 
 });
