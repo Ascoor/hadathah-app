@@ -12,7 +12,8 @@ class SocialRep extends Model
         'name',
         'phone',
         'email',
-        'password',
+
+        'user_id',
         'image',
         'skills',
     ];

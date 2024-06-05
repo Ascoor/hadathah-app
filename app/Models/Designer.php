@@ -11,9 +11,9 @@ class Designer extends Model
 
     protected $fillable = [
         'name',
+        'user_id',
         'phone',
         'email',
-        'password_id',
         'image',
         'skills',
     ];

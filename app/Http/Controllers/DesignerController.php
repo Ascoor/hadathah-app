@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Designer;
 use App\Models\Password;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -34,41 +36,54 @@ class DesignerController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        // Validate the request
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255|unique:designers',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
-            'skills' => 'nullable|string',
-        ]);
-    
-        // Generate a secure random password
-        $password = Str::random(12); // Assuming you are using the Laravel helper Str::random
-    
-        // Store the password in the passwords table
-        $passwordEntry = Password::create(['password' => bcrypt($password)]);
-    
-        // Create the designer with the password_id
-        $designer = Designer::create([
-            'name' => $validatedData['name'],
-            'phone' => $validatedData['phone'],
-            'password_id' => $passwordEntry->id, // Store the password id in the designer record
-            'skills' => $validatedData['skills'],
-        ]);
-    
-        // Handle file upload if it exists
-        if ($request->hasFile('image')) {
-            $directory = 'public/designers';
-            Storage::makeDirectory($directory); // Ensure the directory exists
-            $imagePath = $request->file('image')->store($directory);
-            $designer->image = Storage::url($imagePath);
-            $designer->save(); // Save the update
-        }
+     */public function store(Request $request)
+{
+    // Validate the request
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'phone' => 'required|string|max:255|unique:users',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+        'skills' => 'nullable|string',
+    ]);
+
+    // Generate a default password based on the first 5 characters of the email
+    $defaultPasswordPart = substr($validatedData['email'], 0, 5); // Get first 5 characters of the email
+    $password = $defaultPasswordPart . '@2024'; // Append '2024' to the extracted part
+
+    // Create the user with the custom password
+    $user = User::create([
+        'name' => $validatedData['name'],
+        'email' => $validatedData['email'],
+        'password' => bcrypt($password), // Encrypt password
+        'phone' => $validatedData['phone']
+    ]);
+
+    // Create the designer linked to the user
+    $designer = Designer::create([
+        'user_id' => $user->id,
+        'name' => $validatedData['name'],
+        'phone' => $validatedData['phone'],
+        'skills' => $validatedData['skills'],
+    ]);
+
+    // Handle file upload if it exists
+    if ($request->hasFile('image')) {
+        $directory = 'public/designers';
+        Storage::makeDirectory($directory); // Ensure the directory exists
+        $imagePath = $request->file('image')->store($directory);
+        $designer->image = Storage::url($imagePath);
+        $designer->save(); // Save the update
     }
-    
+
+    // Optionally, return a response or redirect
+    return response()->json([
+        'message' => 'Designer created successfully!',
+        'user' => $user,
+        'designer' => $designer
+    ]);
+}
+
     /**
      * Display the specified resource.
      *
@@ -99,21 +114,28 @@ class DesignerController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-    public function update(Request $request, Designer $designer)
-    {
-         $validatedData = $request->validate([
-             'name' => 'required|string|max:255',
-             'phone' => 'required|string|max:255|unique:designers,phone,' . $designer->id,
-             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
-             'skills' => 'nullable|string',
-         ]);
- 
-    
-    // Use Arr::except to remove the 'image' key from the validated data array before updating the designer
-    $dataWithoutImage = Arr::except($validatedData, ['image']);
-    
-    // Update Designer with the validated data (except the image)
-    $designer->update($dataWithoutImage);
+public function update(Request $request, Designer $designer)
+{
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:255|unique:designers,phone,' . $designer->id,
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
+        'skills' => 'nullable|string',
+        'password' => 'nullable|string|min:6', // Optional password change
+    ]);
+
+    // Use Arr::except to remove the 'image' and 'password' keys from the validated data array before updating the designer
+    $dataWithoutImageAndPassword = Arr::except($validatedData, ['image', 'password']);
+
+    // Update Designer with the validated data (except the image and password)
+    $designer->update($dataWithoutImageAndPassword);
+
+    // Handle password change if provided
+    if (!empty($validatedData['password'])) {
+        $user = $designer->user; // Assuming a 'user' relationship exists on the Designer model
+        $user->password = Hash::make($validatedData['password']);
+        $user->save();
+    }
 
     if ($request->hasFile('image')) {
         try {
@@ -136,7 +158,7 @@ class DesignerController extends Controller
     
             DB::commit();
     
-            return response()->json(['message' => 'designer updated successfully.', 'designer' => $designer]);
+            return response()->json(['message' => 'Designer updated successfully.', 'designer' => $designer]);
         } catch (\Exception $e) {
             // If there's an error, rollback the transaction
             DB::rollBack();

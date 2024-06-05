@@ -15,14 +15,15 @@ return new class extends Migration
     {
         Schema::create('sale_reps', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // ربط بجدول المستخدمين
             $table->string('name');
             $table->string('phone');
             $table->string('email')->unique()->nullable();
-            $table->foreignId('password_id')->constrained('passwords');
             $table->string('image')->nullable(); // افتراض أن الصورة قد تكون فارغة
-            $table->text('covered_areas'); // أو يمكنك استخدام `string` إذا كانت المناطق المغطاة قصيرة
-            $table->timestamps(); // إنشاء `created_at` و `updated_at` تلقائيًا
+            $table->text('covered_areas'); // المناطق التي يغطيها المندوب
+            $table->timestamps();
         });
+        
         
     }
 

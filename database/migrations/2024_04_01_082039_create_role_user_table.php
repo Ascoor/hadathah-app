@@ -14,11 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('role_user', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('role_id')->constrained()->onDelete('cascade');
-            $table->morphs('userable'); // هذا السطر سيربط بين معرف المستخدم ونوعه (مثل مصمم، مندوب، إلخ)
-            $table->timestamps();
+            $table->foreignId('role_id')->constrained('roles');
+            $table->foreignId('user_id')->constrained('users');
+            $table->primary(['role_id', 'user_id']);
         });
+        
         
     }
 
