@@ -58,8 +58,9 @@ class DesignersTableSeeder extends Seeder
                 [
                     'name' => $data['name'],
                     'email' => $data['email'],
-                    'password' => Hash::make('defaultPassword123'), // You might want to set a more secure, generated password
-                ]
+                    'password' => Hash::make('defaultPassword123'), 
+                    'role_id' => 2,
+                    ]
             );
 
             // Create or update the designer profile linked to the user

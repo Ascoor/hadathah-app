@@ -58,7 +58,8 @@ class SaleRepsTableSeeder extends Seeder
                     'name' => $data['name'],
                     'email' => $data['email'],
                     'password' => Hash::make('defaultPassword123'), // Consider setting a more secure, dynamically generated password
-                ]
+                    'role_id' => 3,
+                    ]
             );
 
             // Create or update the sales representative profile linked to the user

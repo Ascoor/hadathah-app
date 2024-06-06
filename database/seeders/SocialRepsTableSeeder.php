@@ -14,42 +14,68 @@ class SocialRepsTableSeeder extends Seeder
 {
     public function run()
     {
-        // Assuming users have already been created or you create them as needed
-        $users = User::whereIn('email', [
-            'maha@hadathah.org', // Correct this according to actual emails in your database
-            'ahmed@hadathah.org', // Correct this according to actual emails in your database
-            // Add other emails as needed
-        ])->get()->keyBy('email');
-
         $socialRepsData = [
             [
                 'name' => 'مها العتيبي',
                 'phone' => '0581234567',
-                'email' => 'maha@hadathah.org', // Ensure the email is included
-                'image' => '/storage/social-reps/FNKYVfPtuLHRmLpfYEQDGL01ZJTkPk0W8t4qUJvL.png',
+                'email' => 'maha@hadathah.org',
+                'image' => '/storage/social-reps/maha_image.png',
                 'skills' => 'إدارة وسائل التواصل الاجتماعي, إنشاء المحتوى',
             ],
             [
                 'name' => 'أحمد الناصر',
                 'phone' => '0572345678',
-                'email' => 'ahmed@hadathah.org', // Ensure the email is included
-                'image' => '/storage/social-reps/f3OaCevlgerJ6ZitmGT3e6o7IawM4leIREHUITeA.png',
+                'email' => 'ahmed@hadathah.org',
+                'image' => '/storage/social-reps/ahmed_image.png',
                 'skills' => 'التسويق الرقمي, تحسين محركات البحث (SEO)',
             ],
-            // Add other representatives as needed
+            [
+                'name' => 'نورا الفيصل',
+                'phone' => '0522678901',
+                'email' => 'nora@hadathah.org',
+                'image' => '/storage/social-reps/nora_image.png',
+                'skills' => 'تصميم جرافيك, Adobe Photoshop',
+            ],
+            [
+                'name' => 'لمى السليمان',
+                'phone' => '0534567890',
+                'email' => 'lama@hadathah.org',
+                'image' => '/storage/social-reps/lama_image.png',
+                'skills' => 'إنتاج الفيديو, التحرير',
+            ],
+            [
+                'name' => 'خالد الميوف',
+                'phone' => '0523456789',
+                'email' => 'khalid@hadathah.org',
+                'image' => '/storage/social-reps/khalid_image.png',
+                'skills' => 'التواصل مع المؤثرين, شراكات العلامة التجارية',
+            ]
         ];
 
-        foreach ($socialRepsData as $repData) {
-            $user = $users[$repData['email']] ?? null;
-            if ($user) {
-                SocialRep::create([
+        foreach ($socialRepsData as $data) {
+            // Ensure a user account for each social representative or create one
+            $user = User::firstOrCreate(
+                ['email' => $data['email']],
+                [
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'password' => Hash::make('defaultPassword123'), // Consider setting a more secure, dynamically generated password
+                    'role_id' => 4,
+                    ]
+            );
+
+    
+            // Create or update the social representative profile linked to the user
+            SocialRep::updateOrCreate(
+                ['user_id' => $user->id],
+                [
                     'user_id' => $user->id,
-                    'name' => $repData['name'],
-                    'phone' => $repData['phone'],
-                    'image' => $repData['image'],
-                    'skills' => $repData['skills'],
-                ]);
-            }
+                    'name' => $data['name'],
+                    'phone' => $data['phone'],
+                    'image' => $data['image'],
+                    'skills' => $data['skills'],
+                ]
+            );
         }
     }
 }
