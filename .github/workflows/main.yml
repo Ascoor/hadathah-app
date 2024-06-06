@@ -31,11 +31,11 @@ jobs:
           cd /var/www/html/hadathah.org/hadathah-app
           # Stash any local changes
           git stash
-          # Pull the latest changes from the master branch using SSH
+          # Pull the latest changes from the master branch
           git pull origin master
-          # Ensure all dependencies are installed.
+          # Ensure all dependencies are installed
           composer install --no-interaction --prefer-dist
-          # Run fresh migrations and seed database with interactive confirmation
+          # Run fresh migrations and seed the database
           php artisan migrate:fresh --seed --force
           # Install Passport components with force option
           php artisan passport:install --force
