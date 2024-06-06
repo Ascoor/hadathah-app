@@ -11,6 +11,7 @@ class Designer extends Model
 
     protected $fillable = [
         'name',
+        'user_id',
         'phone',
         'email',
         'user_id',

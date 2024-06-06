@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('arabic_name')->nullable(); // Adding the Arabic name column
             $table->timestamps();
         });
+        
     }
 
     /**

@@ -52,16 +52,16 @@ Route::apiResource('designers', DesignerController::class);
 Route::apiResource('offers', OfferController::class);
 Route::apiResource('orders', OrderController::class);
 
+
+// Convert Offer To Order Route
+Route::post('/offers/convert-offer/{offer}', [OfferController::class, 'convertToOrder']);
+
+//  Order Routes
+Route::get('/orders/by-offer/{offerId}', [OrderController::class, 'getByOffer']);
+Route::get('/orders/order-details/{orderId}', [OrderController::class, 'getOrderDetails']);
+
 //Roles Rutes
 Route::get('/roles', [RoleController::class, 'index']);
 Route::post('/roles', [RoleController::class, 'store']);
-
-
-// Offers Routes
-// routes/web.php
-
-
-
-Route::post('/offers/convert-offer/{offer}', [OfferController::class, 'convertToOrder']);
 
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -22,4 +23,33 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
+    public function getByOffer($offerId)
+    {
+        // Query the orders table to find the order with the given offer_id
+        $order = Order::where('offer_id', $offerId)->first();
+
+        // Check if the order was found
+        if ($order) {
+            return response()->json([
+                'success' => true,
+                'orderId' => $order->id
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        }
+    }
+ 
+    public function getOrderDetails($orderId)
+    {
+        $orderDetails = OrderDetail::where('order_id', $orderId)->first();
+
+        if ($orderDetails) {
+            return response()->json($orderDetails);
+        } else {
+            return response()->json(['message' => 'Order details not found'], 404);
+        }
+    }
 }
