@@ -13,7 +13,7 @@ class SaleRep extends Model
         'name',
         'phone',
         'email',
-        'password',
+        'user_id',
         'image',
         'covered_areas',
     ];

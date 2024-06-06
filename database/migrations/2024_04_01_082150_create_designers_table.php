@@ -15,15 +15,15 @@ return new class extends Migration
     {
         Schema::create('designers', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Link to users table
             $table->string('name');
             $table->string('phone');
-            $table->string('email')->nullable()->unique();
-            $table->foreignId('password_id')->constrained('passwords');
-
+            $table->string('email')->unique()->nullable();
             $table->string('image')->nullable();
-            $table->text('skills');
+            $table->text('skills')->nullable();
             $table->timestamps();
         });
+        
     }
 
     /**

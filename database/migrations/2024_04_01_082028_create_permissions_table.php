@@ -12,13 +12,14 @@ return new class extends Migration
      * @return void
      */
     public function up()
-    {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->string('arabic_name')->nullable(); // Adding the Arabic name column
-            $table->timestamps();
-        });
+    {Schema::create('permissions', function (Blueprint $table) {
+        $table->id();
+        $table->string('name')->unique(); // e.g., create_post, edit_user
+        $table->timestamps();
+    });
+    
+        
+        
     }
 
     /**
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('permissions');
     }
 };

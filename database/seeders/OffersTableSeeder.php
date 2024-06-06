@@ -25,7 +25,7 @@ class OffersTableSeeder extends Seeder
                 'id' => 1,
                 'offer_number' => 'HA-001796387',
                 'customer_id' => 9,
-                'sale_rep_id' => 3,
+                'sale_rep_id' => 1,
                 'offer_date' => '2024-05-02 23:59:00',
                 'products' => '[{"product_id":5,"quantity":23,"notes":"ds"},{"product_id":5,"quantity":23,"notes":"ds"},{"product_id":5,"quantity":23,"notes":"ds"},{"product_id":5,"quantity":23,"notes":"ds"},{"product_id":3,"quantity":2,"notes":"df"}]',
                 'total' => '320372.00',

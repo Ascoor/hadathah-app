@@ -8,24 +8,21 @@ class RolesTableSeeder extends Seeder
 {
     public function run()
     {
-        // إنشاء سجل للدور "مصمم"
-        $designer = new Role();
-        $designer->name = 'Designers';
-        $designer->save();
+        $roles = [
+            'Designers' => 'مصمم',
+            'SaleReps' => 'مندوب مبيعات',
+            'SocialReps' => 'مندوب اجتماعي',
+            'Admin' => 'مدير'
+        ];
 
-        // إنشاء سجل للدور "مندوب مبيعات"
-        $salesRep = new Role();
-        $salesRep->name = 'SaleReps';
-        $salesRep->save();
-
-        // إنشاء سجل للدور "مندوب اجتماعي"
-        $socialRep = new Role();
-        $socialRep->name = 'SocialReps';
-        $socialRep->save();
-
-        // إنشاء سجل للدور "مدير"
-        $admin = new Role();
-        $admin->name = 'Admin';
-        $admin->save();
+        foreach ($roles as $key => $value) {
+            // Ensure that duplicate roles are not created
+            Role::firstOrCreate([
+                'name' => $key
+            ], [
+                'name' => $key,
+                'arabic_name' => $value  // Assuming you have an 'arabic_name' column for Arabic role names
+            ]);
+        }
     }
 }

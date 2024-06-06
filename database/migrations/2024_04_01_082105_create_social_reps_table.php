@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
+        
         Schema::create('social_reps', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Link to the users table
             $table->string('name');
             $table->string('phone');
-            $table->string('email')->nullable()->unique();
-            $table->foreignId('password_id')->constrained('passwords');
-
-            $table->string('image')->nullable(); // افتراض أن الصورة قد تكون فارغة
-            $table->text('skills')->nullable(); // أو يمكنك استخدام `string` إذا كانت المناطق المغطاة قصيرة
-            $table->timestamps(); // إنشاء `created_at` و `updated_at` تلقائيًا
+            $table->string('email')->unique()->nullable();
+            $table->string('image')->nullable(); // Assuming the image may be optional
+            $table->text('skills')->nullable(); // Text field for storing various skills
+            $table->timestamps();
         });
+        
     }
 
     /**
