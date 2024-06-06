@@ -32,21 +32,24 @@ class DesignersTableSeeder extends Seeder
                 'name' => 'سارة محمود',
                 'phone' => '01034563890',
                 'email' => 'sara.mahmoud@hadathah.org',
-                'image' => '/storage/designers/sara_image.png',
+                'image' => '/storage/designers/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
+               
                 'skills' => 'تصميم ويب, HTML, CSS',
             ],
             [
                 'name' => 'آية علي',
                 'phone' => '01045328901',
                 'email' => 'aya.ali@hadathah.org',
-                'image' => '/storage/designers/aya_image.png',
+                 'image' => '/storage/designers/W6FmT6tsD5BeTJEE5wsyPL4Rk5i2O9QV2dF0C9Fo.png',
+               
                 'skills' => 'تصميم داخلي, AutoCAD',
             ],
             [
                 'name' => 'عمر خالد',
                 'phone' => '01056739012',
                 'email' => 'omar.khaled@hadathah.org',
-                'image' => '/storage/designers/omar_image.png',
+                'image' => '/storage/designers/xLWJKdVf9Ln6liNLLuvo5tR4LLe6YAQl4SYx4wK7.png',
+             
                 'skills' => 'تصميم أزياء, الخياطة',
             ]
         ];

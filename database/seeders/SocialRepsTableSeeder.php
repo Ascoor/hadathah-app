@@ -19,7 +19,7 @@ class SocialRepsTableSeeder extends Seeder
                 'name' => 'مها العتيبي',
                 'phone' => '0581234567',
                 'email' => 'maha@hadathah.org',
-                'image' => '/storage/social-reps/maha_image.png',
+                'image' => '/storage/sale-rep/9Rn387Cas1nTvp8DQdQz56InbT1HCIfittvQLWYD.png',
                 'skills' => 'إدارة وسائل التواصل الاجتماعي, إنشاء المحتوى',
             ],
             [
