@@ -35,8 +35,8 @@ jobs:
           git pull origin master
           # Ensure all dependencies are installed
           composer install --no-interaction --prefer-dist
-          # Run fresh migrations and seed the database
-          php artisan migrate:fresh --seed --force
+          # Run migrations with no interaction to bypass the production prompt
+          php artisan migrate --force
           # Install Passport components with force option
           php artisan passport:install --force
           # Clear and cache configurations, routes, and views
