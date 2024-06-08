@@ -2,56 +2,82 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ActivationEmail;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255', // Include validation for name
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-        ]);
-        
-        $user = User::create([
-            'name' => $validatedData['name'], // Save the name
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-        ]);
+{
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users',
+        'password' => 'required|min:6',
+    ]);
+    
+    $activationCode = Str::random(30); // Generate a random activation code
 
 
-        $accessToken = $user->createToken('authToken')->accessToken;
+    $user = User::create([
+        'name' => $validatedData['name'],
+        'email' => $validatedData['email'],
+        'password' => Hash::make($validatedData['password']),
+        'role_id' => 5, // تعيين الدور بقيمة 5 بشكل افتراضي
+        'activation_code' => $activationCode, // حفظ رمز التفعيل
+    ]);
 
-        return response(['user' => $user, 'access_token' => $accessToken]);
+    // Sending activation email
+    Mail::to($user->email)->send(new ActivationEmail($user));
+
+    return response(['message' => 'success']);
+}
+public function activateAccount($code)
+{
+    $user = User::where('activation_code', $code)->first();
+
+    if (!$user) {
+        return response(['message' => 'Invalid activation code'], 404);
     }
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'email|required',
-            'password' => 'required'
-        ]);
-    
-        // Check if the email exists in the database
-        $user = \App\Models\User::where('email', $request->email)->first();
-        if (!$user) {
-            return response()->json(['message' => 'هذا البريد ليس مسجل كمستخدم'], 404);
-        }
-    
-        // Attempt to authenticate with the provided credentials
-        if (!auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-            return response()->json(['message' => 'هناك خطأ في كلمة المرور أعد إدخال كلمة المرور وحاول مرة أخرى'], 401);
-        }
-    
-        // Create access token for the authenticated user
-        $accessToken = auth()->user()->createToken('authToken')->accessToken;
-    
-        return response(['user' => auth()->user(), 'access_token' => $accessToken]);
+
+    $user->activation_code = null;
+    $user->is_active = true; // Make sure to add is_active to the fillable array if used
+    $user->save();
+
+
+    // Redirect to a specific URL in the frontend
+    return redirect()->away('https://app.hadathah.org/done-activation');
+
+}
+
+public function login(Request $request)
+{
+    $request->validate([
+        'email' => 'email|required',
+        'password' => 'required'
+    ]);
+
+    // Check if the email exists and if the account is activated
+    $user = User::where('email', $request->email)->whereNull('activation_code')->first();
+    if (!$user) {
+        return response()->json(['message' => 'هذا البريد ليس مسجل كمستخدم أو لم يتم تفعيل الحساب بعد'], 404);
     }
-    
+
+    // Attempt to authenticate with the provided credentials
+    if (!auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
+        return response()->json(['message' => 'هناك خطأ في كلمة المرور أعد إدخال كلمة المرور وحاول مرة أخرى'], 401);
+    }
+
+    // Create access token for the authenticated user
+    $accessToken = auth()->user()->createToken('authToken')->accessToken;
+
+    return response(['user' => auth()->user(), 'access_token' => $accessToken]);
+}
+
 
     public function logout(Request $request)
     {

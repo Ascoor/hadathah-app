@@ -10,9 +10,10 @@ class RolesTableSeeder extends Seeder
     {
         $roles = [
             'Admin' => 'مدير',
-            'Designers' => 'مصمم',
-            'SaleReps' => 'مندوب مبيعات',
-            'SocialReps' => 'مندوب اجتماعي'
+            'Designer' => 'مصمم',
+            'SaleRep' => 'مندوب مبيعات',
+            'SocialRep' => 'مندوب تسويق',
+            'User' => 'مستخدم'
         ];
 
         foreach ($roles as $key => $value) {

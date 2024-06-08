@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;  // Ensure this is the correct path to your User model
 use App\Models\Designer;  // Assuming Designer model is also in App\Models
@@ -61,6 +61,7 @@ class DesignersTableSeeder extends Seeder
                 [
                     'name' => $data['name'],
                     'email' => $data['email'],
+                    'activation_code' => Str::random(30),
                     'password' => Hash::make('defaultPassword123'), 
                     'role_id' => 2,
                     ]
