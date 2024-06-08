@@ -3,7 +3,7 @@ name: Remote Build and Deploy on Laravel Update
 on:
   push:
     branches:
-      - master  # Triggers on pushes to the main branch.
+      - master  # Triggers on pushes to the master branch.
 
 jobs:
   laravel-update-and-deploy:
@@ -34,7 +34,7 @@ jobs:
           # Pull the latest changes from the master branch
           git pull origin master
           # Ensure all dependencies are installed
-          composer install --no-interaction --prefer-dist
+          COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist
           # Run migrations with no interaction to bypass the production prompt
           php artisan migrate:fresh --seed --force
           # Install Passport components with force option
