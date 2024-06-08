@@ -263,12 +263,10 @@
       <div class='relative mx-auto p-4 w-full md:max-w-2xl lg:max-w-3xl bg-white bg-opacity-90 rounded-xl shadow-xl'>
         <div class='flex flex-col md:flex-row items-center justify-around'>
           <div class='md:w-1/2 p-4 bg-white rounded-lg shadow-inner text-center'>
-            <h1>مرحبًا بك، {{ $user->name }}</h1>
-    <p>نرجو منك تفعيل حسابك بالنقر على الرابط التالي:</p>
-    <a >تفعيل الحساب</a>
+            <h1>مرحبًا بك،</h1>
             <p>نرجو منك تفعيل حسابك بالنقر على الرابط التالي:</p>
            
-    <button href="{{ url('https://api.hadathah.org/activate/' . $user->activation_code) }}" class="active-button">تفعيل الحساب</button>
+    <button class="active-button">تفعيل الحساب</button>
           </div>
         </div>
       </div>
