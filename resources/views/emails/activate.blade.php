@@ -10,7 +10,6 @@
         :root {
             --hadathah-cyan: #4A90E2;
             --hadathah-dark-cyan: #3D7EBB;
-            --text-white: #FFFFFF;
             --bg-gradient-start: #4A00E0;
             --bg-gradient-end: #8E2DE2;
         }
