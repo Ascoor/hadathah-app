@@ -36,7 +36,7 @@ jobs:
           # Ensure all dependencies are installed
           composer install --no-interaction --prefer-dist
           # Run migrations with no interaction to bypass the production prompt
-          php artisan migrate:fresh --seed  --force
+          php artisan migrate:fresh --seed --force
           # Install Passport components with force option
           php artisan passport:install --force
           # Clear and cache configurations, routes, and views
