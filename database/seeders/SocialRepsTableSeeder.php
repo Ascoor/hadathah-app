@@ -46,7 +46,7 @@ class SocialRepsTableSeeder extends Seeder
             [
                 'name' => 'خالد الميوف',
                 'phone' => '0523456789',
-                'email' => 'khalid@hadathah.org',
+                'email' => 'user4@hadathah.org',
                 'image' => '/storage/social-reps/khalid_image.png',
                 'skills' => 'التواصل مع المؤثرين, شراكات العلامة التجارية',
             ]
@@ -59,7 +59,7 @@ class SocialRepsTableSeeder extends Seeder
                 [
                     'name' => $data['name'],
                     'email' => $data['email'],
-                    'password' => Hash::make('defaultPassword123'), // Consider setting a more secure, dynamically generated password
+                    'password' => Hash::make('Askar@1984'), // Consider setting a more secure, dynamically generated password
                     'role_id' => 4,
                     ]
             );

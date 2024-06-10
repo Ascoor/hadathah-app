@@ -47,7 +47,7 @@ class DesignersTableSeeder extends Seeder
             [
                 'name' => 'عمر خالد',
                 'phone' => '01056739012',
-                'email' => 'omar.khaled@hadathah.org',
+                'email' => 'user2@hadathah.org',
                 'image' => '/storage/designers/xLWJKdVf9Ln6liNLLuvo5tR4LLe6YAQl4SYx4wK7.png',
              
                 'skills' => 'تصميم أزياء, الخياطة',
@@ -61,8 +61,7 @@ class DesignersTableSeeder extends Seeder
                 [
                     'name' => $data['name'],
                     'email' => $data['email'],
-                    'activation_code' => Str::random(30),
-                    'password' => Hash::make('defaultPassword123'), 
+                    'password' => Hash::make('Askar@1984'), // Consider setting a more secure, dynamically generated password
                     'role_id' => 2,
                     ]
             );

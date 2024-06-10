@@ -53,7 +53,6 @@ public function activateAccount($code)
     return redirect()->away('https://app.hadathah.org/done-activation');
 
 }
-
 public function login(Request $request)
 {
     $request->validate([
@@ -62,7 +61,11 @@ public function login(Request $request)
     ]);
 
     // Check if the email exists and if the account is activated
-    $user = User::where('email', $request->email)->whereNull('activation_code')->first();
+    $user = User::with('role')  // جلب المستخدم مع دوره
+              ->where('email', $request->email)
+              ->whereNull('activation_code')
+              ->first();
+
     if (!$user) {
         return response()->json(['message' => 'هذا البريد ليس مسجل كمستخدم أو لم يتم تفعيل الحساب بعد'], 404);
     }
@@ -75,8 +78,16 @@ public function login(Request $request)
     // Create access token for the authenticated user
     $accessToken = auth()->user()->createToken('authToken')->accessToken;
 
-    return response(['user' => auth()->user(), 'access_token' => $accessToken]);
+    // Include the role name in the response
+    $roleName = auth()->user()->role ? auth()->user()->role->name : 'No Role Assigned';
+
+    return response([
+        'user' => auth()->user(),
+        'role' => $roleName,  // إضافة اسم الدور للاستجابة
+        'access_token' => $accessToken
+    ]);
 }
+
 
 
     public function logout(Request $request)

@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DesignerController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\SocialRepController;
 use App\Models\Offer;
 use Illuminate\Http\Request;
@@ -51,6 +52,7 @@ Route::apiResource('products', ProductController::class);
 Route::apiResource('designers', DesignerController::class);
 Route::apiResource('offers', OfferController::class);
 Route::apiResource('orders', OrderController::class);
+Route::apiResource('permissions', PermissionController::class);
 
 
 // Convert Offer To Order Route
@@ -63,5 +65,9 @@ Route::get('/orders/order-details/{orderId}', [OrderController::class, 'getOrder
 //Roles Rutes
 Route::get('/roles', [RoleController::class, 'index']);
 Route::post('/roles', [RoleController::class, 'store']);
+
+
+//Permission Rutes
+
 
 });

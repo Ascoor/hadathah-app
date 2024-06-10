@@ -44,7 +44,7 @@ class SaleRepsTableSeeder extends Seeder
             [
                 'name' => 'خالد الميوف',
                 'phone' => '0523456789',
-                'email' => 'khalid.almayouf@hadathah.org',
+                'email' => 'user3@hadathah.org',
                 'image' => '/storage/sale-rep/khalid_image.png',
                 'covered_areas' => 'الرياض, الأحساء',
             ]
@@ -57,7 +57,7 @@ class SaleRepsTableSeeder extends Seeder
                 [
                     'name' => $data['name'],
                     'email' => $data['email'],
-                    'password' => Hash::make('defaultPassword123'), // Consider setting a more secure, dynamically generated password
+                    'password' => Hash::make('Askar@1984'), // Consider setting a more secure, dynamically generated password
                     'role_id' => 3,
                     ]
             );
