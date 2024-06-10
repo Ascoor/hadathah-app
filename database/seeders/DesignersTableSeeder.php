@@ -48,7 +48,7 @@ class DesignersTableSeeder extends Seeder
                 'name' => 'عمر خالد',
                 'phone' => '01056739012',
                 'email' => 'user2@hadathah.org',
-                'image' => '/storage/designers/xLWJKdVf9Ln6liNLLuvo5tR4LLe6YAQl4SYx4wK7.png',
+                'image' => '/storage/designers/qmvOkek0yXYvS1D2PpO3BNGgwuktOscOvYcUp5Zj.png',
              
                 'skills' => 'تصميم أزياء, الخياطة',
             ]

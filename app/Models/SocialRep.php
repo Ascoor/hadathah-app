@@ -16,4 +16,9 @@ class SocialRep extends Model
         'image',
         'skills',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

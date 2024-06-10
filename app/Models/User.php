@@ -45,4 +45,19 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+
+    public function designerImage()
+    {
+        return $this->hasOne(Designer::class, 'user_id');
+    }
+
+    public function saleRepImage()
+    {
+        return $this->hasOne(SaleRep::class, 'user_id');
+    }
+
+    public function socialRepImage()
+    {
+        return $this->hasOne(SocialRep::class, 'user_id');
+    }
 }

@@ -47,7 +47,7 @@ class SocialRepsTableSeeder extends Seeder
                 'name' => 'خالد الميوف',
                 'phone' => '0523456789',
                 'email' => 'user4@hadathah.org',
-                'image' => '/storage/social-reps/khalid_image.png',
+                'image' => '/storage/designers/qmvOkek0yXYvS1D2PpO3BNGgwuktOscOvYcUp5Zj.png',
                 'skills' => 'التواصل مع المؤثرين, شراكات العلامة التجارية',
             ]
         ];

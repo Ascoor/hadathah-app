@@ -45,7 +45,7 @@ class SaleRepsTableSeeder extends Seeder
                 'name' => 'خالد الميوف',
                 'phone' => '0523456789',
                 'email' => 'user3@hadathah.org',
-                'image' => '/storage/sale-rep/khalid_image.png',
+                'image' => '/storage/designers/qmvOkek0yXYvS1D2PpO3BNGgwuktOscOvYcUp5Zj.png',
                 'covered_areas' => 'الرياض, الأحساء',
             ]
         ];
