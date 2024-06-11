@@ -8,6 +8,7 @@ use App\Http\Controllers\SaleRepController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DesignerController;
+use App\Http\Controllers\EmployeeUserController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
@@ -55,6 +56,7 @@ Route::apiResource('designers', DesignerController::class);
 Route::apiResource('offers', OfferController::class);
 Route::apiResource('orders', OrderController::class);
 Route::apiResource('permissions', PermissionController::class);
+Route::apiResource('employee-users', EmployeeUserController::class);
 
 
 // Convert Offer To Order Route

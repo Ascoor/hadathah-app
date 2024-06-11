@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('activation_code', 30)->nullable();
-
+            $table->timestamp('reset_token_expires_at')->nullable();
+       
             $table->foreignId('role_id')->constrained('roles'); // Link to roles table
             $table->string('password');
             $table->boolean('is_active')->default(false); // Add is_active column with default false

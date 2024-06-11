@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -14,17 +16,23 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array
      */
     protected $fillable = [
-        
-        'name', 'email', 'password', 'activation_code', 'role_id'
+        'name',
+        'email',
+        'password',
+        'activation_code',
+        'reset_token',
+        'reset_token_expires_at',
+        'role_id',
+        'is_active',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * The attributes that should be hidden for arrays.
      *
-     * @var array<int, string>
+     * @var array
      */
     protected $hidden = [
         'password',
@@ -32,13 +40,34 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * The attributes that should be cast to native types.
      *
-     * @var array<string, string>
+     * @var array
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'reset_token_expires_at' => 'datetime',
     ];
+  /**
+     * Generate and set the reset token and its expiration time.
+     */
+    public function setResetToken()
+    {
+        $this->reset_token = Str::random(60);
+        $this->reset_token_expires_at = now()->addHour();
+        $this->save();
+    }
+
+    /**
+     * Clear the reset token and its expiration time.
+     */
+    public function clearResetToken()
+    {
+        $this->reset_token = null;
+        $this->reset_token_expires_at = null;
+        $this->save();
+    }
+
 
     // Add a relationship method for the role
     public function role()

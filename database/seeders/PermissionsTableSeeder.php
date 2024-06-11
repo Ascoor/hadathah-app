@@ -19,7 +19,7 @@ class PermissionsTableSeeder extends Seeder
             'design_add', 'design_update', 'design_delete',
             'socialRep_add', 'socialRep_update', 'socialRep_delete',
             'saleRep_add', 'saleRep_update', 'saleRep_delete',
-            'offer_add', 'offer_update', 'offer_delete'
+            'offer_add', 'offer_update', 'offer_delete','product_add', 'product_update', 'product_delete','category_add', 'category_update', 'category_delete'
         ];
         foreach ($permissions as $permission) {
             DB::table('permissions')->insert([

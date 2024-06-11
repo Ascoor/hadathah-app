@@ -98,44 +98,47 @@ public function login(Request $request)
         $request->user()->token()->revoke();
         return response(['message' => 'You have been successfully logged out!'], 200);
     }
-    
     public function sendResetLinkEmail(Request $request)
-    {
-        $request->validate(['email' => 'required|email']);
+{
+    $request->validate(['email' => 'required|email']);
 
-        $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
-            return response()->json(['message' => 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني.'], 404);
-        }
-
-        $token = Str::random(60);
-        $user->update(['reset_token' => $token]);
-
-        $resetUrl = "https://app.hadathah.org/reset-password?token=$token";
-
-        Mail::to($user->email)->send(new ResetPasswordMail($resetUrl));
-
-        return response()->json(['message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.']);
+    if (!$user) {
+        return response()->json(['message' => 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني.'], 404);
     }
 
-    public function resetPassword(Request $request)
-    {
-        $request->validate([
-            'token' => 'required',
-            'password' => 'required|min:6|confirmed',
-        ]);
+    $token = Str::random(60);
+    $expiresAt = now()->addHour(); // تعيين صلاحية الرمز إلى ساعة واحدة
+    $user->update(['reset_token' => $token, 'reset_token_expires_at' => $expiresAt]);
 
-        $user = User::where('reset_token', $request->token)->first();
+    $resetUrl = "https://app.hadathah.org/reset-password?token=$token";
 
-        if (!$user) {
-            return response()->json(['message' => 'رمز إعادة تعيين كلمة المرور غير صالح أو منتهي.'], 400);
-        }
+    Mail::to($user->email)->send(new ResetPasswordMail($resetUrl));
 
-        $user->password = Hash::make($request->password);
-        $user->reset_token = null;
-        $user->save();
+    return response()->json(['message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.']);
+}
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'token' => 'required',
+        'password' => 'required|min:6|confirmed',
+    ]);
 
-        return response()->json(['message' => 'تم إعادة تعيين كلمة المرور بنجاح.']);
+    $user = User::where('reset_token', $request->token)
+                ->where('reset_token_expires_at', '>', now())
+                ->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'رمز إعادة تعيين كلمة المرور غير صالح أو منتهي.'], 400);
     }
+
+    $user->password = Hash::make($request->password);
+    $user->reset_token = null;
+    $user->reset_token_expires_at = null;
+    $user->save();
+
+    return response()->json(['message' => 'تم إعادة تعيين كلمة المرور بنجاح.']);
+}
+
 }
