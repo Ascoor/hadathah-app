@@ -36,6 +36,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
+Route::post('/password/email', [AuthController::class, 'sendResetLinkEmail']);
+Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 
 
 Route::group(['middleware' => ['cors']], function () {

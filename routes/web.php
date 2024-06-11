@@ -28,9 +28,11 @@ Route::get('/', function () {
 // });
 
 
-
-
 // Activation route
 
 Route::get('/activate/{code}', [AuthController::class, 'activateAccount']);
-
+Route::get('/done',
+function () {
+    return view('emails.done');
+}
+);

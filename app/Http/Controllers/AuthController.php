@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ActivationEmail;
+use App\Mail\ResetPasswordMail;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-
+use Illuminate\Support\Facades\Password;
+use Illuminate\Mail\Message;
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -95,5 +97,45 @@ public function login(Request $request)
         // Assuming you're storing tokens in the "personal_access_tokens" table
         $request->user()->token()->revoke();
         return response(['message' => 'You have been successfully logged out!'], 200);
+    }
+    
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني.'], 404);
+        }
+
+        $token = Str::random(60);
+        $user->update(['reset_token' => $token]);
+
+        $resetUrl = "https://app.hadathah.org/reset-password?token=$token";
+
+        Mail::to($user->email)->send(new ResetPasswordMail($resetUrl));
+
+        return response()->json(['message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.']);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $user = User::where('reset_token', $request->token)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'رمز إعادة تعيين كلمة المرور غير صالح أو منتهي.'], 400);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->reset_token = null;
+        $user->save();
+
+        return response()->json(['message' => 'تم إعادة تعيين كلمة المرور بنجاح.']);
     }
 }
