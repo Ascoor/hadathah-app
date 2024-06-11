@@ -10,37 +10,29 @@ use Illuminate\Http\Request;
 class EmployeeUserController extends Controller
 {
    // TODO employees index
-
    public function index()
    {
-       $designers = Designer::with(['user.role'])->get();
-       $saleReps = SaleRep::with(['user.role'])->get();
-       $socialReps = SocialRep::with(['user.role'])->get();
+       // Fetch all employees with their user and role details
+       $designers = Designer::with('user.role')->get();
+       $saleReps = SaleRep::with('user.role')->get();
+       $socialReps = SocialRep::with('user.role')->get();
    
-       $employeeUsers = [
-           'designers' => $designers->map(function ($designer) {
+       // Create a unified list of all employee users
+       $employeeUsers = collect($designers)
+           ->merge($saleReps)
+           ->merge($socialReps)
+           ->map(function ($employee) {
                return [
-                   'name' => $designer->user->name,
-                   'email' => $designer->user->email,
-                   'role' => $designer->user->role->name
+                   'name' => $employee->user->name,
+                   'email' => $employee->user->email,
+                   'role' => $employee->user->role->name,
+                   'image' => $employee->user->image // Assuming the image attribute is correctly set up
                ];
-           }),
-           'saleReps' => $saleReps->map(function ($saleRep) {
-               return [
-                   'name' => $saleRep->user->name,
-                   'email' => $saleRep->user->email,
-                   'role' => $saleRep->user->role->name
-               ];
-           }),
-           'socialReps' => $socialReps->map(function ($socialRep) {
-               return [
-                   'name' => $socialRep->user->name,
-                   'email' => $socialRep->user->email,
-                   'role' => $socialRep->user->role->name
-               ];
-           }),
-       ];
+           });
    
-       return response()->json($employeeUsers);
+       return response()->json([
+           'employeeUsers' => $employeeUsers
+       ]);
+      
    }
 }   
