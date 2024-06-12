@@ -13,17 +13,38 @@ class PermissionsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        
         $permissions = [
-            'order_add', 'order_update', 'order_delete',
-            'customer_add', 'customer_update', 'customer_delete',
-            'design_add', 'design_update', 'design_delete',
-            'socialRep_add', 'socialRep_update', 'socialRep_delete',
-            'saleRep_add', 'saleRep_update', 'saleRep_delete',
-            'offer_add', 'offer_update', 'offer_delete','product_add', 'product_update', 'product_delete','category_add', 'category_update', 'category_delete'
+            ['name' => 'add', 'section' => 'Orders'],
+            ['name' => 'update', 'section' => 'Orders'],
+            ['name' => 'delete', 'section' => 'Orders'],
+            ['name' => 'add', 'section' => 'Customers'],
+            ['name' => 'update', 'section' => 'Customers'],
+            ['name' => 'delete', 'section' => 'Customers'],
+            ['name' => 'add', 'section' => 'Designs'],
+            ['name' => 'update', 'section' => 'Designs'],
+            ['name' => 'delete', 'section' => 'Designs'],
+            ['name' => 'add', 'section' => 'Marketing'],
+            ['name' => 'update', 'section' => 'Marketing'],
+            ['name' => 'delete', 'section' => 'Marketing'],
+            ['name' => 'add', 'section' => 'Sales'],
+            ['name' => 'update', 'section' => 'Sales'],
+            ['name' => 'delete', 'section' => 'Sales'],
+            ['name' => 'add', 'section' => 'Offers'],
+            ['name' => 'update', 'section' => 'Offers'],
+            ['name' => 'delete', 'section' => 'Offers'],
+            ['name' => 'add', 'section' => 'Products'],
+            ['name' => 'update', 'section' => 'Products'],
+            ['name' => 'delete', 'section' => 'Products'],
+            ['name' => 'add', 'section' => 'Categories'],
+            ['name' => 'update', 'section' => 'Categories'],
+            ['name' => 'delete', 'section' => 'Categories'],
         ];
+
         foreach ($permissions as $permission) {
             DB::table('permissions')->insert([
-                'name' => $permission,
+                'name' => $permission['name'],
+                'section' => $permission['section'],
                 'created_at' => now(),
                 'updated_at' => now()
             ]);

@@ -23,10 +23,14 @@ class EmployeeUserController extends Controller
            ->merge($socialReps)
            ->map(function ($employee) {
                return [
+                'id' => $employee->user->id,
                    'name' => $employee->user->name,
                    'email' => $employee->user->email,
                    'role' => $employee->user->role->name,
-                   'image' => $employee->user->image // Assuming the image attribute is correctly set up
+
+                   'phone' => $employee->phone,
+                   'created_at' => $employee->created_at,
+                   'image' => $employee->image // Assuming the image attribute is correctly set up
                ];
            });
    

@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('permissions', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();  // اسم الصلاحية مثل 'create_task', 'edit_user' إلخ.
+            $table->string('name');  
+            $table->string('section');
             $table->timestamps();
         });
     }
