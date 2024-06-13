@@ -84,7 +84,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(SaleRep::class, 'user_id');
     }
-
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'user_permissions')->withPivot('enabled');
+    }
+    
     public function socialRepImage()
     {
         return $this->hasOne(SocialRep::class, 'user_id');

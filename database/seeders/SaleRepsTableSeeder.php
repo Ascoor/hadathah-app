@@ -24,21 +24,22 @@ class SaleRepsTableSeeder extends Seeder
                 'name' => 'سعود الشمري',
                 'phone' => '05452789012',
                 'email' => 'saud.alshammari@hadathah.org',
-                'image' => '/storage/sale-rep/XN9g5yRYwtkvrcU54kv0YFRoPN6JrsaNkPM60opP.png',
+                'image' => '/storage/designers/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
                 'covered_areas' => 'الدمام, الخبر',
             ],
             [
                 'name' => 'نورا الفيصل',
                 'phone' => '0522678901',
                 'email' => 'nora.alfaisal@hadathah.org',
-                'image' => '/storage/sale-rep/nora_image.png',
+                'image' => '/storage/designers/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
                 'covered_areas' => 'مكة, المدينة',
             ],
             [
                 'name' => 'لمى السليمان',
                 'phone' => '0534567890',
                 'email' => 'lama.alsulaiman@hadathah.org',
-                'image' => '/storage/sale-rep/lama_image.png',
+              
+                'image' => '/storage/designers/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
                 'covered_areas' => 'الطائف, جدة',
             ],
             [

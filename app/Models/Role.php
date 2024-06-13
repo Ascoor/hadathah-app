@@ -10,11 +10,13 @@ class Role extends Model
 {
     use HasFactory;
 
-    protected $table = 'roles'; // اسم الجدول
+    protected $fillable = ['name', 'arabic_name'];
 
-    protected $fillable = [
-        'name', // حقول أخرى يمكنك إضافتها هنا
-    ];
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'role_permission');
+    }
+
 
     // إذا كنت تريد تحديد العلاقات مع المستخدمين، يمكنك إضافة هذا الكود:
     public function users()

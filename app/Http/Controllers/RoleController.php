@@ -20,5 +20,11 @@ class RoleController extends Controller
         $role = Role::create($request->all());
         return response()->json($role);
     }
+ 
+    public function getRolePermissions($roleId)
+    {
 
+        $permissions = Role::find($roleId)->permissions;
+        return response()->json($permissions);
+    }
 }
