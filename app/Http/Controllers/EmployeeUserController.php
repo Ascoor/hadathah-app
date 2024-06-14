@@ -26,7 +26,7 @@ class EmployeeUserController extends Controller
                 'id' => $employee->user->id,
                    'name' => $employee->user->name,
                    'email' => $employee->user->email,
-                   'role' => $employee->user->role->name,
+                   'role' => $employee->user->role->arabic_name,
 
                    'phone' => $employee->phone,
                    'created_at' => $employee->created_at,

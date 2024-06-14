@@ -24,42 +24,27 @@ public function index()
 
 public function getUserPermissions($userId)
 {
-    // Fetch user-specific permissions organized by section
+    // Fetch user permissions
     $user = User::findOrFail($userId);
-    $permissions = $user->permissions()->with('permission')->get()->groupBy('permission.section');
-
-    $organizedPermissions = [];
-    foreach ($permissions as $section => $perms) {
-        foreach ($perms as $perm) {
-            $organizedPermissions[$section][] = [
-                'name' => $perm->permission->name,
-                'enabled' => $perm->enabled
-            ];
-        }
-    }
-
-    return response()->json($organizedPermissions);
+    $permissions = $user->permissions->groupBy('section');
+    return response()->json($permissions);
 }
+
 
 public function updateUserPermissions(Request $request, $userId)
 {
     $user = User::findOrFail($userId);
-    $permissionsInput = $request->all();
+    $permissionsInput = $request->input('permissions'); // تأكد من استقبال الصلاحيات بشكل صحيح
 
-    foreach ($permissionsInput as $section => $perms) {
-        foreach ($perms as $perm) {
-            $permission = Permission::where('section', $section)
-                                    ->where('name', $perm['name'])
-                                    ->firstOrFail();
+    // مسح جميع الصلاحيات السابقة للمستخدم
+    $user->permissions()->detach();
 
-            // Update or create user permission records
-            $user->permissions()->updateOrCreate(
-                ['permission_id' => $permission->id],
-                ['enabled' => $perm['enabled']]
-            );
-        }
+    // إضافة الصلاحيات الجديدة أو تحديثها
+    foreach ($permissionsInput as $perm) {
+        $user->permissions()->attach($perm['permission_id'], ['enabled' => $perm['enabled']]);
     }
 
     return response()->json(['message' => 'Permissions updated successfully!']);
 }
+
 }
