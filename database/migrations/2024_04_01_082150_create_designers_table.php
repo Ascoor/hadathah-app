@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Link to users table
             $table->string('name');
             $table->string('phone');
-            $table->string('email')->unique()->nullable();
             $table->string('image')->nullable();
+            $table->string('email_external')->nullable();
             $table->text('skills')->nullable();
             $table->timestamps();
         });

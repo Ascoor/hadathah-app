@@ -13,7 +13,7 @@ class Designer extends Model
         'name',
         'user_id',
         'phone',
-        'email',
+        'email_external',
         'user_id',
         'image',
         'skills',

@@ -35,7 +35,7 @@ public function updateUserPermissions(Request $request, $userId)
 {
     $user = User::findOrFail($userId);
     $permissionsInput = $request->input('permissions'); // تأكد من استقبال الصلاحيات بشكل صحيح
-
+    
     // مسح جميع الصلاحيات السابقة للمستخدم
     $user->permissions()->detach();
 

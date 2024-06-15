@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\Designer;
 use App\Models\Offer;
 use App\Models\Product;
+use App\Models\Order;
 use App\Models\SaleRep;
 use App\Models\SocialRep;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class DashboardController extends Controller
         $designersCount = Designer::count();
         $saleRepsCount = SaleRep::count();
         $socialRepsCount = SocialRep::count();
+     
         $employeesCount = $designersCount + $saleRepsCount + $socialRepsCount;
         return response()->json([
             'customers' => Customer::count(),
@@ -25,6 +27,7 @@ class DashboardController extends Controller
 
             'sales' => SaleRep::count(),
             'offers' => Offer::count(),
+            'orders' =>  Order::count()
         ]);
 }
 }
