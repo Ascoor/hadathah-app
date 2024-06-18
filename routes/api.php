@@ -74,10 +74,11 @@ Route::get('/roles/{roleId}/permissions', [RoleController::class, 'getRolePermis
 
 
 //Permission Rutes
-
 Route::get('/permissions', [PermissionController::class, 'index']);
-Route::get('/permissions/{userId}', [PermissionController::class, 'getUserPermissions']);
+Route::get('/user-permissions/{userId}', [PermissionController::class, 'getUserPermissions']);
 Route::post('/permissions/{userId}', [PermissionController::class, 'updateUserPermissions']);
+Route::get('/permissions/{userId}', [PermissionController::class, 'getPermissions']);
+Route::get('/permissions/stream/{userId}', [PermissionController::class, 'streamPermissions']);
 
 
 });
