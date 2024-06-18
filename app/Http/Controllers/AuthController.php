@@ -62,8 +62,7 @@ public function login(Request $request)
         'password' => 'required'
     ]);
 
-    // Check if the email exists and if the account is activated
-    $user = User::with('role')  // جلب المستخدم مع دوره
+    $user = User::with('role', 'permissions')  // جلب المستخدم مع دوره وصلاحياته
               ->where('email', $request->email)
               ->whereNull('activation_code')
               ->first();
@@ -72,23 +71,23 @@ public function login(Request $request)
         return response()->json(['message' => 'هذا البريد ليس مسجل كمستخدم أو لم يتم تفعيل الحساب بعد'], 404);
     }
 
-    // Attempt to authenticate with the provided credentials
     if (!auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
         return response()->json(['message' => 'هناك خطأ في كلمة المرور أعد إدخال كلمة المرور وحاول مرة أخرى'], 401);
     }
 
-    // Create access token for the authenticated user
     $accessToken = auth()->user()->createToken('authToken')->accessToken;
 
-    // Include the role name in the response
     $roleName = auth()->user()->role ? auth()->user()->role->name : 'No Role Assigned';
+    $permissions = auth()->user()->permissions ? auth()->user()->permissions->toArray() : [];
 
     return response([
         'user' => auth()->user(),
-        'role' => $roleName,  // إضافة اسم الدور للاستجابة
+        'role' => $roleName,
+        'permissions' => $permissions,
         'access_token' => $accessToken
     ]);
 }
+
 
 
 

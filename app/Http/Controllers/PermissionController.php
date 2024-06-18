@@ -24,9 +24,13 @@ public function index()
 
 public function getUserPermissions($userId)
 {
-    // Fetch user permissions
+    // تحقق من أن المستخدم موجود
     $user = User::findOrFail($userId);
-    $permissions = $user->permissions->groupBy('section');
+
+    // احصل على الصلاحيات الخاصة بالمستخدم
+    $permissions = $user->permissions()->get();
+
+    // أعد الصلاحيات كاستجابة JSON
     return response()->json($permissions);
 }
 

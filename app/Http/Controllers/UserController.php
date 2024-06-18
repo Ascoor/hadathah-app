@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 class UserController extends Controller
 {
+
+    public function index()
+    {
+        // جلب جميع المستخدمين مع العلاقات المرتبطة بهم
+        $users = User::with(['permissions', 'role', 'designer', 'saleRep', 'socialRep'])->get();
+
+        return response()->json($users);
+    }
     
     public function store(Request $request)
     {

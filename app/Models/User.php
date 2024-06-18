@@ -69,28 +69,28 @@ class User extends Authenticatable
         $this->save();
     }
 
-
-    // Add a relationship method for the role
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
 
-    public function designerImage()
+    public function designer()
     {
         return $this->hasOne(Designer::class, 'user_id');
     }
 
-    public function saleRepImage()
+    public function saleRep()
     {
         return $this->hasOne(SaleRep::class, 'user_id');
     }
-    public function permissions():  BelongsToMany
+
+    public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class, 'user_permissions')->withPivot('enabled');
     }
-    
-    public function socialRepImage()
+
+
+    public function socialRep()
     {
         return $this->hasOne(SocialRep::class, 'user_id');
     }

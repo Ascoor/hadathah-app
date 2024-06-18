@@ -13,6 +13,7 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\SocialRepController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,7 @@ Route::group(['middleware' => ['cors']], function () {
 Route::get('/dashboard', [DashboardController::class, 'index']);
 
 
+Route::apiResource('users', UserController::class);
 Route::apiResource('customers', CustomerController::class);
 Route::apiResource('sale-reps', SaleRepController::class);
 Route::apiResource('social-reps', SocialRepController::class);
