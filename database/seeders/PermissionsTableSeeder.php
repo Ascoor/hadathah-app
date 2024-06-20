@@ -19,6 +19,11 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'add', 'section' => 'Users'],
             ['name' => 'update', 'section' => 'Users'],
             ['name' => 'delete', 'section' => 'Users'],
+
+            ['name' => 'show', 'section' => 'MultiEmployees'],
+            ['name' => 'add', 'section' => 'MultiEmployees'],
+            ['name' => 'update', 'section' => 'MultiEmployees'],
+            ['name' => 'delete', 'section' => 'MultiEmployees'],
             ['name' => 'show', 'section' => 'Orders'],
             ['name' => 'add', 'section' => 'Orders'],
             ['name' => 'update', 'section' => 'Orders'],

@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DesignerController;
 use App\Http\Controllers\EmployeeUserController;
+use App\Http\Controllers\MultiEmployeeController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
@@ -51,6 +52,7 @@ Route::apiResource('users', UserController::class);
 Route::apiResource('customers', CustomerController::class);
 Route::apiResource('sale-reps', SaleRepController::class);
 Route::apiResource('social-reps', SocialRepController::class);
+Route::apiResource('multi-employees', MultiEmployeeController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('products', ProductController::class);
 Route::apiResource('designers', DesignerController::class);
@@ -58,6 +60,7 @@ Route::apiResource('offers', OfferController::class);
 Route::apiResource('orders', OrderController::class);
 // Route::apiResource('permissions', PermissionController::class);
 Route::apiResource('employee-users', EmployeeUserController::class);
+
 
 
 // Convert Offer To Order Route
@@ -78,6 +81,16 @@ Route::get('/roles/{roleId}/permissions', [RoleController::class, 'getRolePermis
 Route::get('/permissions', [PermissionController::class, 'index']);
 Route::get('/permissions/{userId}', [PermissionController::class, 'getUserPermissions']);
 Route::post('/permissions/{userId}', [PermissionController::class, 'updateUserPermissions']);
+
+// users routes
+Route::get('/user-image/{userId}', [UserController::class, 'getUserImage']);
+
+
+// Sale Rep routes
+Route::get('/sale-rep/offers/{saleRepId}', [SaleRepController::class, 'getOffersBySaleRep']);
+
+
+
 
 
 });

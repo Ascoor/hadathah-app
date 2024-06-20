@@ -32,7 +32,6 @@ class DesignerController extends Controller
             'phone' => 'required|string|max:255|unique:designers',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
             'skills' => 'nullable|string',
-            'email_external' => 'required|string|email|max:255'
         ]);
 
         $nameInEnglish = ConversionHelper::convertNameToEnglish($validatedData['name']);
@@ -62,7 +61,7 @@ class DesignerController extends Controller
             'name' => $validatedData['name'],
             'phone' => $validatedData['phone'],
             'skills' => $validatedData['skills'],
-            'email_external' => $validatedData['email_external']
+
         ]);
 
         if ($request->hasFile('image')) {
@@ -73,26 +72,6 @@ class DesignerController extends Controller
             $designer->save(); 
         }
 
-        // Add the user to Mail-in-a-Box
-        $added = $this->mailinaboxService->addUser($user->email, $password);
-
-        if (!$added) {
-            // Handle error
-            return response()->json(['error' => 'Failed to add user to Mail-in-a-Box'], 500);
-        }
-
-        // Generate reset password link
-        $token = Str::random(60);
-        DB::table('password_resets')->insert([
-            'email' => $user->email,
-            'token' => Hash::make($token),
-            'created_at' => now()
-        ]);
-
-        $resetUrl = url('/reset-password?token=' . $token . '&email=' . urlencode($user->email));
-
-        // Send activation email
-        Mail::to($designer->email_external)->send(new ResetPasswordMail($resetUrl));
 
         return response()->json([
             'message' => 'Designer created successfully!',

@@ -60,7 +60,7 @@ class SocialRepsTableSeeder extends Seeder
                     'name' => $data['name'],
                     'email' => $data['email'],
                     'password' => Hash::make('Askar@1984'), // Consider setting a more secure, dynamically generated password
-                    'role_id' => 4,
+                    'role_id' => 2,
                     ]
             );
 

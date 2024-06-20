@@ -5,26 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Designer extends Model
+class MultiEmployee extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'user_id',
         'phone',
+        'email',
         'user_id',
         'image',
-        'skills',
+        'position',
     ];
-    public function designs()
-    {
-        return $this->hasMany(Design::class);
-    }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+    public function Offers()
+    {
+        return $this->hasMany(Offer::class);
+    }
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    
 }

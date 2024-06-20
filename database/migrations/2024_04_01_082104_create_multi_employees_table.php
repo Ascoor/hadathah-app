@@ -13,15 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('designers', function (Blueprint $table) {
+        
+        Schema::create('multi_employees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Link to users table
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Link to the users table
             $table->string('name');
             $table->string('phone');
-            $table->string('image')->nullable();
-            $table->text('skills')->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->string('image')->nullable(); // Assuming the image may be optional
+            $table->text('position'); // Text field for regions or areas covered by the sales rep
             $table->timestamps();
         });
+        
+        
         
     }
 
@@ -32,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('designers');
+        Schema::dropIfExists('sale_reps');
     }
 };

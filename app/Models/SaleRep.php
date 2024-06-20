@@ -18,9 +18,13 @@ class SaleRep extends Model
         'covered_areas',
     ];
 
-    public function order()
+    public function orders()
     {
-        return $this->belongsTo(Order::class);
+        return $this->hasMany(Order::class);
+    }
+    public function Offers()
+    {
+        return $this->hasMany(Offer::class);
     }
     public function user()
     {
