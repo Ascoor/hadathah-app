@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CorsMiddleware
 {
@@ -19,6 +19,7 @@ class CorsMiddleware
         $allowedOrigins = ['http://localhost:3000','http://127.0.0.1:3000','http://app.hadathah.org','https://app.hadathah.org'];
         $origin = $request->headers->get('origin');
 
+        $response = $next($request);
         if (in_array($origin, $allowedOrigins)) {
             $headers = [
                 'Access-Control-Allow-Origin'      => $origin,
@@ -32,12 +33,18 @@ class CorsMiddleware
                 return response()->json('{"method":"OPTIONS"}', 200, $headers);
             }
 
-            $response = $next($request);
-            foreach ($headers as $key => $value) {
-                $response->header($key, $value);
+            // Check if the response is a StreamedResponse
+            if ($response instanceof StreamedResponse) {
+                foreach ($headers as $key => $value) {
+                    $response->headers->set($key, $value);
+                }
+            } else {
+                foreach ($headers as $key => $value) {
+                    $response->header($key, $value);
+                }
             }
-            return $response; // تم تحريك هذا السطر هنا
         }
-        return $next($request); // هذا السطر سيتم تنفيذه فقط إذا لم يتطابق الأصل
+
+        return $response;
     }
 }
