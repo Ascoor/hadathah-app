@@ -22,7 +22,7 @@ class UserPermissionsTableSeeder extends Seeder
         DB::table('user_permissions')->insert(array (
             0 => 
             array (
-                'id' => 1,
+                'id' => 45,
                 'user_id' => 16,
                 'permission_id' => 1,
                 'enabled' => 1,
@@ -31,7 +31,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             1 => 
             array (
-                'id' => 2,
+                'id' => 46,
                 'user_id' => 16,
                 'permission_id' => 2,
                 'enabled' => 1,
@@ -40,25 +40,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             2 => 
             array (
-                'id' => 3,
+                'id' => 47,
                 'user_id' => 16,
                 'permission_id' => 3,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             3 => 
             array (
-                'id' => 4,
+                'id' => 48,
                 'user_id' => 16,
                 'permission_id' => 4,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             4 => 
             array (
-                'id' => 5,
+                'id' => 49,
                 'user_id' => 16,
                 'permission_id' => 5,
                 'enabled' => 1,
@@ -67,7 +67,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             5 => 
             array (
-                'id' => 6,
+                'id' => 50,
                 'user_id' => 16,
                 'permission_id' => 6,
                 'enabled' => 1,
@@ -76,25 +76,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             6 => 
             array (
-                'id' => 7,
+                'id' => 51,
                 'user_id' => 16,
                 'permission_id' => 7,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             7 => 
             array (
-                'id' => 8,
+                'id' => 52,
                 'user_id' => 16,
                 'permission_id' => 8,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             8 => 
             array (
-                'id' => 9,
+                'id' => 53,
                 'user_id' => 16,
                 'permission_id' => 9,
                 'enabled' => 1,
@@ -103,7 +103,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             9 => 
             array (
-                'id' => 10,
+                'id' => 54,
                 'user_id' => 16,
                 'permission_id' => 10,
                 'enabled' => 1,
@@ -112,25 +112,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             10 => 
             array (
-                'id' => 11,
+                'id' => 55,
                 'user_id' => 16,
                 'permission_id' => 11,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             11 => 
             array (
-                'id' => 12,
+                'id' => 56,
                 'user_id' => 16,
                 'permission_id' => 12,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             12 => 
             array (
-                'id' => 13,
+                'id' => 57,
                 'user_id' => 16,
                 'permission_id' => 13,
                 'enabled' => 1,
@@ -139,7 +139,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             13 => 
             array (
-                'id' => 14,
+                'id' => 58,
                 'user_id' => 16,
                 'permission_id' => 14,
                 'enabled' => 1,
@@ -148,25 +148,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             14 => 
             array (
-                'id' => 15,
+                'id' => 59,
                 'user_id' => 16,
                 'permission_id' => 15,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             15 => 
             array (
-                'id' => 16,
+                'id' => 60,
                 'user_id' => 16,
                 'permission_id' => 16,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             16 => 
             array (
-                'id' => 17,
+                'id' => 61,
                 'user_id' => 16,
                 'permission_id' => 17,
                 'enabled' => 1,
@@ -175,7 +175,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             17 => 
             array (
-                'id' => 18,
+                'id' => 62,
                 'user_id' => 16,
                 'permission_id' => 18,
                 'enabled' => 1,
@@ -184,25 +184,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             18 => 
             array (
-                'id' => 19,
+                'id' => 63,
                 'user_id' => 16,
                 'permission_id' => 19,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             19 => 
             array (
-                'id' => 20,
+                'id' => 64,
                 'user_id' => 16,
                 'permission_id' => 20,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             20 => 
             array (
-                'id' => 21,
+                'id' => 65,
                 'user_id' => 16,
                 'permission_id' => 21,
                 'enabled' => 1,
@@ -211,7 +211,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             21 => 
             array (
-                'id' => 22,
+                'id' => 66,
                 'user_id' => 16,
                 'permission_id' => 22,
                 'enabled' => 1,
@@ -220,25 +220,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             22 => 
             array (
-                'id' => 23,
+                'id' => 67,
                 'user_id' => 16,
                 'permission_id' => 23,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             23 => 
             array (
-                'id' => 24,
+                'id' => 68,
                 'user_id' => 16,
                 'permission_id' => 24,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             24 => 
             array (
-                'id' => 25,
+                'id' => 69,
                 'user_id' => 16,
                 'permission_id' => 25,
                 'enabled' => 1,
@@ -247,7 +247,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             25 => 
             array (
-                'id' => 26,
+                'id' => 70,
                 'user_id' => 16,
                 'permission_id' => 26,
                 'enabled' => 1,
@@ -256,25 +256,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             26 => 
             array (
-                'id' => 27,
+                'id' => 71,
                 'user_id' => 16,
                 'permission_id' => 27,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             27 => 
             array (
-                'id' => 28,
+                'id' => 72,
                 'user_id' => 16,
                 'permission_id' => 28,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             28 => 
             array (
-                'id' => 29,
+                'id' => 73,
                 'user_id' => 16,
                 'permission_id' => 29,
                 'enabled' => 1,
@@ -283,7 +283,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             29 => 
             array (
-                'id' => 30,
+                'id' => 74,
                 'user_id' => 16,
                 'permission_id' => 30,
                 'enabled' => 1,
@@ -292,25 +292,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             30 => 
             array (
-                'id' => 31,
+                'id' => 75,
                 'user_id' => 16,
                 'permission_id' => 31,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             31 => 
             array (
-                'id' => 32,
+                'id' => 76,
                 'user_id' => 16,
                 'permission_id' => 32,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             32 => 
             array (
-                'id' => 33,
+                'id' => 77,
                 'user_id' => 16,
                 'permission_id' => 33,
                 'enabled' => 1,
@@ -319,7 +319,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             33 => 
             array (
-                'id' => 34,
+                'id' => 78,
                 'user_id' => 16,
                 'permission_id' => 34,
                 'enabled' => 1,
@@ -328,25 +328,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             34 => 
             array (
-                'id' => 35,
+                'id' => 79,
                 'user_id' => 16,
                 'permission_id' => 35,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             35 => 
             array (
-                'id' => 36,
+                'id' => 80,
                 'user_id' => 16,
                 'permission_id' => 36,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             36 => 
             array (
-                'id' => 37,
+                'id' => 81,
                 'user_id' => 16,
                 'permission_id' => 37,
                 'enabled' => 1,
@@ -355,7 +355,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             37 => 
             array (
-                'id' => 38,
+                'id' => 82,
                 'user_id' => 16,
                 'permission_id' => 38,
                 'enabled' => 1,
@@ -364,25 +364,25 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             38 => 
             array (
-                'id' => 39,
+                'id' => 83,
                 'user_id' => 16,
                 'permission_id' => 39,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             39 => 
             array (
-                'id' => 40,
+                'id' => 84,
                 'user_id' => 16,
                 'permission_id' => 40,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             40 => 
             array (
-                'id' => 41,
+                'id' => 85,
                 'user_id' => 16,
                 'permission_id' => 41,
                 'enabled' => 1,
@@ -391,7 +391,7 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             41 => 
             array (
-                'id' => 42,
+                'id' => 86,
                 'user_id' => 16,
                 'permission_id' => 42,
                 'enabled' => 1,
@@ -400,19 +400,19 @@ class UserPermissionsTableSeeder extends Seeder
             ),
             42 => 
             array (
-                'id' => 43,
+                'id' => 87,
                 'user_id' => 16,
                 'permission_id' => 43,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
             43 => 
             array (
-                'id' => 44,
+                'id' => 88,
                 'user_id' => 16,
                 'permission_id' => 44,
-                'enabled' => 0,
+                'enabled' => 1,
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),

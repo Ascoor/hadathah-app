@@ -17,7 +17,7 @@ class MultiEmployeesTableSeeder extends Seeder
                 'name' => 'كامل أبوليلة',
                 'email' => 'user1@hadathah.org',
                 'phone' => '0567890123',
-                'image' => '/storage/multi-employees/XksAkZo9GDANOtFh9QAzDhgW14KaHHpwpvTisYii.png',
+                'image' => '/storage/multi-employees/si1dD0tVeBQOta6M4VQMDkvfEcfItsXXJvAvcQfx.png',
                 'position' => 'مدير',
                 'role_id' => 1
             ],
@@ -25,7 +25,7 @@ class MultiEmployeesTableSeeder extends Seeder
                 'name' => 'مها العتيبي',
                 'email' => 'abdulrahman.alghamdi@hadathah.org',
                 'phone' => '0567890123',
-                'image' => '/storage/multi-employees/XksAkZo9GDANOtFh9QAzDhgW14KaHHpwpvTisYii.png',
+                'image' => '//storage/multi-employees/uZI8OmnwuIgM4lsuJXz56PZPV2ldYtGVwQNKEF3A.png',
                 'position' => 'سكرتيرة',
                 'role_id' => 3
             ],
@@ -33,7 +33,7 @@ class MultiEmployeesTableSeeder extends Seeder
                 'name' => 'عبدالرحمن الغامدي',
                 'phone' => '0567890123',
                 'email' => 'abdulrahman.alghamdi@hadathah.org',
-                'image' => '/storage/multi-employees/XksAkZo9GDANOtFh9QAzDhgW14KaHHpwpvTisYii.png',
+                'image' => '/storage/multi-employees/W6FmT6tsD5BeTJEE5wsyP4Rk5i2O9QV2dF0C9Fo.png',
                 'position' => 'موظف',
                 'role_id' => 2
             ],
@@ -41,7 +41,7 @@ class MultiEmployeesTableSeeder extends Seeder
                 'name' => 'هيثم الشمري',
                 'phone' => '05452789012',
                 'email' => 'hitham.alshammari@hadathah.org',
-                'image' => '/storage/multi-employees/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
+                'image' => '/storage/multi-employees/xigO9RsyNyIDrsmL4aBHYVvWXJSGrBOtIaduX5Lj.png',
                 'position' => 'موظف',
                 'role_id' => 2
             ],
@@ -49,7 +49,7 @@ class MultiEmployeesTableSeeder extends Seeder
                 'name' => 'مريم الفيصل',
                 'phone' => '0522678901',
                 'email' => 'maria.alfaisal@hadathah.org',
-                'image' => '/storage/multi-employees/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
+                'image' => '/storage/multi-employees/xLWJKdVf9Ln6liNLLuvo5tR4LLe6YAQl4SYx4wK7.png',
                 'position' => 'موظف',
                 'role_id' => 2
             ],
@@ -57,7 +57,7 @@ class MultiEmployeesTableSeeder extends Seeder
                 'name' => 'هلا السليمان',
                 'phone' => '0534567890',
                 'email' => 'hala.alsulaiman@hadathah.org',
-                'image' => '/storage/multi-employees/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
+                'image' => '/storage/multi-employees/XSYpEhLMFVYrMvZVyRaWLESV80HGSowF6A0ozyDb.png',
                 'position' => 'موظف',
                 'role_id' => 2
             ],
@@ -65,7 +65,7 @@ class MultiEmployeesTableSeeder extends Seeder
                 'name' => 'محمد الميوف',
                 'phone' => '0523456789',
                 'email' => 'user5@hadathah.org',
-                'image' => '/storage/multi-employees/qmvOkek0yXYvS1D2PpO3BNGgwuktOscOvYcUp5Zj.png',
+                'image' => '/storage/multi-employees/y5YK4esQkrpfAxTWIsA9VeGYzydSEqjwgwIy6YnH.png',
                 'position' => 'موظف',
                 'role_id' => 2
             ]
