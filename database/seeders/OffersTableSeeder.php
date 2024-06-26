@@ -4,59 +4,43 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class OffersTableSeeder extends Seeder
 {
     /**
-     * Auto generated seed file
+     * Run the database seeds.
      *
      * @return void
      */
     public function run()
     {
-        // حذف البيانات القديمة
         DB::table('offers')->delete();
 
-        // جلب معرفات المندوبين
-        $saleReps = DB::table('sale_reps')->pluck('id')->toArray();
-
-        // التأكد من وجود مندوبين
-        if (empty($saleReps)) {
-            return;
-        }
-
-        // إنشاء عروض جديدة
         $offers = [];
-
-        for ($i = 1; $i <= 6; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $offers[] = [
                 'id' => $i,
-                'offer_number' => 'HA-' . strtoupper(Str::random(10)),
-                'customer_id' => rand(1, 10),
-                'sale_rep_id' => $saleReps[array_rand($saleReps)], // اختيار عشوائي لمعرف المندوب
-                'offer_date' => now()->subDays(rand(1, 30)),
-                'products' => json_encode([
-                    ['product_id' => rand(1, 10), 'quantity' => rand(1, 50), 'notes' => Str::random(10)],
-                    ['product_id' => rand(1, 10), 'quantity' => rand(1, 50), 'notes' => Str::random(10)],
-                ]),
-                'total' => rand(1000, 50000),
-                'tax_rate' => 12.00,
-                'discount_rate' => 11.00,
-                'total_final' => rand(900, 45000),
+                'offer_number' => 'HA-001796387' . $i, // Generate unique offer numbers
+                'customer_id' => 9,
+                'sale_rep_id' => 1,
+                'offer_date' => '2024-05-02 23:59:00',
+                'products' => '[{"product_id":5,"quantity":23,"notes":"ds"},{"product_id":5,"quantity":23,"notes":"ds"},{"product_id":5,"quantity":23,"notes":"ds"},{"product_id":5,"quantity":23,"notes":"ds"},{"product_id":3,"quantity":2,"notes":"df"}]',
+                'total' => '320372.00',
+                'tax_rate' => '12.00',
+                'discount_rate' => '11.00',
+                'total_final' => '319346.81',
                 'payment_method' => 'visa',
                 'payment_type' => 'partial',
                 'is_active' => 1,
-                'valid_until' => now()->addDays(rand(1, 30)),
+                'valid_until' => '2024-06-03 00:00:00',
                 'time_plementation_range' => '30',
                 'status' => 'active',
                 'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => '2024-05-03 00:00:29',
+                'updated_at' => '2024-05-03 00:00:29',
             ];
         }
 
-        // إدخال العروض في الجدول
         DB::table('offers')->insert($offers);
     }
 }

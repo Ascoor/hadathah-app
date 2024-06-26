@@ -124,4 +124,20 @@ class EmployeeUserController extends Controller
     
         return response()->json(['message' => 'Employee created successfully']);
     }
+
+    public function getEmployeesData()
+    {
+        $designers = Designer::all();
+        $saleReps = SaleRep::all();
+        $socialReps = SocialRep::all();
+        $multiEmployees = MultiEmployee::all();
+    
+        return response()->json([
+            'designers' => $designers,
+            'saleReps' => $saleReps,
+            'socialReps' => $socialReps,
+            'multiEmployees' => $multiEmployees
+        ]);
+    }
+
 }    

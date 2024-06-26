@@ -17,21 +17,21 @@ class SaleRepsTableSeeder extends Seeder
                 'name' => 'فهد الغامدي',
                 'phone' => '0567890123',
                 'email' => 'fahad.alghamdi@hadathah.org',
-                'image' => '/storage/sale-rep/XksAkZo9GDANOtFh9QAzDhgW14KaHHpwpvTisYii.png',
+                'image' => '/storage/sale-reps/si1dD0tVeBQOta6M4VQMDkvfEcfItsXXJvAvcQfx.png',
                 'covered_areas' => 'الرياض, جدة',
             ],
             [
                 'name' => 'سعود الشمري',
                 'phone' => '05452789012',
                 'email' => 'saud.alshammari@hadathah.org',
-                'image' => '/storage/designers/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
+                'image' => '/storage/sale-reps/JAz7SJTfcsc7YJQOvsZdVkKiloqIgwI7EYuvUfBJ.png',
                 'covered_areas' => 'الدمام, الخبر',
             ],
             [
                 'name' => 'نورا الفيصل',
                 'phone' => '0522678901',
                 'email' => 'nora.alfaisal@hadathah.org',
-                'image' => '/storage/designers/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
+                'image' => '/storage/sale-reps/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
                 'covered_areas' => 'مكة, المدينة',
             ],
             [
@@ -39,14 +39,14 @@ class SaleRepsTableSeeder extends Seeder
                 'phone' => '0534567890',
                 'email' => 'lama.alsulaiman@hadathah.org',
               
-                'image' => '/storage/designers/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
+                'image' => '/storage/sale-reps/jmPRUS8mcHghhXeE5T3taYQQcbpd6YdswfpbNHqz.png',
                 'covered_areas' => 'الطائف, جدة',
             ],
             [
                 'name' => 'خالد الميوف',
                 'phone' => '0523456789',
                 'email' => 'user3@hadathah.org',
-                'image' => '/storage/designers/qmvOkek0yXYvS1D2PpO3BNGgwuktOscOvYcUp5Zj.png',
+                'image' => '/storage/sale-reps/hvq1hwIN82G95HwqchYX98A37frWdhCvE43QYRAr.png',
                 'covered_areas' => 'الرياض, الأحساء',
             ]
         ];

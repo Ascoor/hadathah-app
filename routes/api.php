@@ -62,7 +62,7 @@ Route::apiResource('orders', OrderController::class);
 Route::apiResource('employee-users', EmployeeUserController::class);
 
 
-
+Route::get('employees-data', [EmployeeUserController::class, 'getEmployeesData']);
 // Convert Offer To Order Route
 Route::post('/offers/convert-offer/{offer}', [OfferController::class, 'convertToOrder']);
 
