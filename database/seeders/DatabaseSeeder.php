@@ -25,10 +25,10 @@ class DatabaseSeeder extends Seeder
         // $this->call(OffersTableSeeder::class);
         $this->call(UserPermissionsTableSeeder::class);
         // Automatically run the Passport install command after seeding
-       Artisan::call('passport:install', ['--force' => true]);
-       Artisan::call('optimize:clear');
-
-       // Optionally, output the results of the Passport install to the console
-       echo Artisan::output();
+        Artisan::call('passport:install', ['--force' => true]);
+        Artisan::call('optimize:clear');
+        
+        // Optionally, output the results of the Passport install to the console
+        echo Artisan::output();
    }
 }

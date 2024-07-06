@@ -6,6 +6,7 @@ use App\Models\Designer;
 use App\Models\MultiEmployee;
 use App\Models\SaleRep;
 use App\Models\SocialRep;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
