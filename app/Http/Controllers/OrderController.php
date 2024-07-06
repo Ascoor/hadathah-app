@@ -124,4 +124,23 @@ class OrderController extends Controller
     ], 201);
 }
 
+
+public function destroy(Order $order)
+{
+    // Delete related order details
+    OrderDetail::where('order_id', $order->id)->delete();
+
+    // Delete related order employees
+    OrderEmployee::where('order_id', $order->id)->delete();
+
+    // Delete related order products
+    OrderProduct::where('order_id', $order->id)->delete();
+
+    // Delete the order itself
+    $order->delete();
+
+    return response()->json([
+        'message' => 'Order and related data deleted successfully'
+    ], 200);
+}
 }

@@ -123,7 +123,78 @@ class EmployeeUserController extends Controller
     
         return response()->json(['message' => 'Employee created successfully']);
     }
-
+    public function update(Request $request, $id)
+    {
+        // Find the user and the related record based on the position
+        $user = User::findOrFail($id);
+    
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'position' => 'required|string',
+            'role' => 'required|integer',
+            'skills' => 'nullable|string',
+            'covered_areas' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+        ]);
+    
+        // Update user's name and email if the name has changed
+        if ($validatedData['name'] !== $user->name) {
+            $nameInEnglish = ConversionHelper::convertNameToEnglish($validatedData['name']);
+            $email = strtolower(str_replace(' ', '', $nameInEnglish)) . '@hadathah.org';
+    
+            $user->update([
+                'name' => $validatedData['name'],
+                'email' => $email,
+                'role_id' => $validatedData['role'],
+            ]);
+        } else {
+            $user->update([
+                'role_id' => $validatedData['role'],
+            ]);
+        }
+    
+        // Common data to be updated
+        $data = [
+            'name' => $validatedData['name'],
+            'phone' => $validatedData['phone'],
+        ];
+    
+        // Handle the image update
+        if ($request->hasFile('image')) {
+            $directory = 'public/' . strtolower(str_replace(' ', '_', $validatedData['position']));
+            Storage::makeDirectory($directory);
+            $imagePath = $request->file('image')->store($directory);
+            $data['image'] = Storage::url($imagePath);
+        }
+    
+        // Find and update the record in the appropriate table based on position
+        switch ($validatedData['position']) {
+            case 'designers':
+                $record = Designer::where('user_id', $user->id)->firstOrFail();
+                $data['skills'] = $validatedData['skills'];
+                $record->update($data);
+                break;
+            case 'sale_reps':
+                $record = SaleRep::where('user_id', $user->id)->firstOrFail();
+                $data['covered_areas'] = $validatedData['covered_areas'];
+                $record->update($data);
+                break;
+            case 'social_reps':
+                $record = SocialRep::where('user_id', $user->id)->firstOrFail();
+                $data['skills'] = $validatedData['skills'];
+                $record->update($data);
+                break;
+            case 'multi_employees':
+                $record = MultiEmployee::where('user_id', $user->id)->firstOrFail();
+                $data['position'] = $validatedData['position'];
+                $record->update($data);
+                break;
+        }
+    
+        return response()->json(['message' => 'Employee updated successfully']);
+    }
+    
     public function getEmployeesData()
     {
         $designers = Designer::all();
