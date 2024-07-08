@@ -6,7 +6,6 @@ use App\Models\Designer;
 use App\Helpers\ConversionHelper;
 use Illuminate\Support\Str;
 use App\Models\User;
-use App\Mail\ResetPasswordMail;
 use App\Mail\MailinaboxService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,8 +15,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 
+use App\Http\Controllers\Traits\HandlesImages;
 class DesignerController extends Controller
 {
+    use HandlesImages;
     protected $mailinaboxService;
 
     public function __construct(MailinaboxService $mailinaboxService)

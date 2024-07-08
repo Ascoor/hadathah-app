@@ -9,8 +9,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+use App\Models\Designer;
+use App\Helpers\ConversionHelper;
+use App\Models\User;
+
+use App\Http\Controllers\Traits\HandlesImages;
 class MultiEmployeeController extends Controller
-{
+{  use HandlesImages;
     
 
     /**
@@ -41,138 +46,141 @@ class MultiEmployeeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-
-     public function store(Request $request)
-{
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'phone' => 'required|string|max:255|unique:multi_employees',
-               'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
-        'position' => 'required|string',
-    ]);
-
-    $multiEmployee = new MultiEmployee();
-    $multiEmployee->name = $validatedData['name'];
-    $multiEmployee->phone = $validatedData['phone'];
-    $multiEmployee->position = $validatedData['position'];
-
-    if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('public/multi-employees');
-        $multiEmployee->image = Storage::url($imagePath);
-    }
-
-    $multiEmployee->save();
-
-    return response()->json(['message' => 'multiEmployee created successfully.', 'multiEmployee' => $multiEmployee]);
-}
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'position' => 'required|string',
+                 'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+        ]);
+        $nameInEnglish = ConversionHelper::convertNameToEnglish($validatedData['name']);
+        $nameParts = explode(' ', $nameInEnglish);
+        $firstName = strtolower($nameParts[0]);
+        $lastName = strtolower(end($nameParts));
+        $email = $firstName . '.' . $lastName . '-saleRep@hadathah.org';
+      
+        $request->merge(['email' => $email]);
+        $request->validate([
+            'email' => 'required|string|email|max:255|unique:users',
+        ]);
+        
+        $validatedData['email'] = $email;
+       
+        // Generate password
+        $defaultPasswordPart = substr($validatedData['email'], 0, 5);
+        $password = $defaultPasswordPart . '@2024';
+      
+        // Create user
+        $user = User::create([
+            
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => bcrypt($password),
+            'phone' => $validatedData['phone'],
+            'role_id' => 2
+          ]);
+          
+          $multiEmployee = MultiEmployee::create([
+          'user_id' => $user->id,
+          'name' => $validatedData['name'],
+          'phone' => $validatedData['phone'],
+          'position' => $validatedData['position'],
+          
+          
+              ]);
+      
+          if ($request->hasFile('image')) {
+              $this->handleImageUpload($request, $multiEmployee, 'public/multi-employees');
+          }
+      
+      
+          return response()->json([
+              'message' => 'multi Employees created successfully!',
+              'user' => $user,
+              'saleRep' => $multiEmployee
+          ]);}
+          public function update(Request $request, MultiEmployee $multiEmployee): JsonResponse
+          {
+              $validatedData = $request->validate([
+                 'phone' => 'required|string|max:255|unique:sale_reps,phone,' . $multiEmployee->id,
+                  'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
+                  'position' => 'nullable|string',
+              ]);
+      
+              // Use Arr::except to remove the 'image' key from the validated data array before updating the saleRep
+              $dataWithoutImage = Arr::except($validatedData, ['image']);
+      
+              // Update multi Employee with the validated data (except the image)
+              $multiEmployee->update($dataWithoutImage);
+      
+              if ($request->hasFile('image')) {
+                  try {
+                      DB::beginTransaction();
+      
+                      // Capture the old image path before updating
+                      $oldImagePath = $multiEmployee->image ? str_replace('/storage', 'public', $multiEmployee->image) : null;
+      
+                      // Store the new image and update the multiEmployee's image attribute
+                      $imagePath = $request->file('image')->store('public/multi-employees');
+                      $multiEmployee->image = Storage::url($imagePath);
+      
+                      // Save the multi Employee with the new image path
+                      $multiEmployee->save();
+      
+                      // Delete the old image after the new image has been saved successfully
+                      if ($oldImagePath) {
+                          Storage::delete($oldImagePath);
+                      }
+      
+                      DB::commit();
+      
+                      return response()->json(['message' => 'multi employee updated successfully.', 'multi Employee' => $multiEmployee]);
+                  } catch (\Exception $e) {
+                      // If there's an error, rollback the transaction
+                      DB::rollBack();
+                      return response()->json(['message' => 'Failed to update the multi Employee image', 'error' => $e->getMessage()], 500);
+                  }
+              } else {
+                  // If no image is part of the request, the other updates have already been saved
+                  return response()->json(['message' => 'multi Employee updated successfully without image update.', 'saleRep' => $multiEmployee]);
+              }
+          }
+    
+    public function destroy($id): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+        DB::beginTransaction();
     
-    
-    public function update(Request $request, MultiEmployee $multiEmployee)
-{
-    // Validate the incoming request data
-    $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-    'phone' => 'required|string|max:255|unique:multi_employees',
-    'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
-    'position' => 'required|string',
-    ]);
-    
-    // Use Arr::except to remove the 'image' key from the validated data array before updating the multiEmployee
-    $dataWithoutImage = Arr::except($validatedData, ['image']);
-    
-    // Update multiEmployee with the validated data (except the image)
-    $multiEmployee->update($dataWithoutImage);
-
-    if ($request->hasFile('image')) {
         try {
-            DB::beginTransaction();
+            $multiEmployee = MultiEmployee::findOrFail($id);
     
-            // Capture the old image path before updating
-            $oldImagePath = $multiEmployee->image ? str_replace('/storage', 'public', $multiEmployee->image) : null;
-
-            // Store the new image and update the multiEmployee's image attribute
-            $imagePath = $request->file('image')->store('public/multi-employees');
-            $multiEmployee->image = Storage::url($imagePath);
+            // Get the associated user
+            $user = User::findOrFail($multiEmployee->user_id);
     
-            // Save the multiEmployee with the new image path
-            $multiEmployee->save();
-    
-            // Delete the old image after the new image has been saved successfully
-            if ($oldImagePath) {
-                Storage::delete($oldImagePath);
+            // Delete the multiEmployee's image if it exists
+            if ($multiEmployee->image) {
+                $oldImagePath = str_replace('/storage', 'public', $multiEmployee->image);
+                if (Storage::exists($oldImagePath)) {
+                    $deleted = Storage::delete($oldImagePath);
+                    if (!$deleted) {
+                        DB::rollBack();
+                        return response()->json(['message' => 'Error deleting the image.'], 500);
+                    }
+                }
             }
+    
+            // Delete the multiEmployee
+            $multiEmployee->delete();
+    
+            // Delete the associated user
+            $user->delete();
     
             DB::commit();
     
-            return response()->json(['message' => 'multiEmployee updated successfully.', 'multiEmployee' => $multiEmployee]);
+            return response()->json(['message' => 'multi employee, associated user, and image deleted successfully.']);
         } catch (\Exception $e) {
-            // If there's an error, rollback the transaction
             DB::rollBack();
-            return response()->json(['message' => 'Failed to update the multiEmployee image', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error occurred while deleting sale Rep and user: ' . $e->getMessage()], 500);
         }
-    } else {
-        // If no image is part of the request, the other updates have already been saved
-        return response()->json(['message' => 'multiEmployee updated successfully without image update.', 'multiEmployee' => $multiEmployee]);
-    }
-}
-    /**
-     * get Sale Rep Offers Controller
-     *
-     * @param  int  $multiEmployeeId
-     * @return \Illuminate\Http\Response
-     */
-  
-
-
-     public function destroy($id): JsonResponse
-     {
-         $multiEmployee = MultiEmployee::findOrFail($id);
-     
-         // Attempt to delete the associated image if it exists
-         if ($multiEmployee->image) {
-             $oldImagePath = str_replace('/storage', 'public', $multiEmployee->image);
-             if (Storage::exists($oldImagePath)) {
-                 $deleted = Storage::delete($oldImagePath);
-                 if (!$deleted) {
-                     return response()->json(['message' => 'Error deleting the image.'], 500);
-                 }
-             }
-         }
-     
-         // Delete the multiEmployee record
-         $multiEmployee->delete();
-     
-         return response()->json(['message' => 'Sale rep and associated image deleted successfully.']);
-     }
-     
+        }
 }
