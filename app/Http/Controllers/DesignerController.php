@@ -135,22 +135,40 @@ public function update(Request $request, $id)
 }
 
 
-     public function destroy($id): JsonResponse
-     {
-         $designer = Designer::findOrFail($id);
+public function destroy($id): JsonResponse
+{
+    DB::beginTransaction();
 
-         if ($designer->image) {
-             $oldImagePath = str_replace('/storage', 'public', $designer->image);
-             if (Storage::exists($oldImagePath)) {
-                 $deleted = Storage::delete($oldImagePath);
-                 if (!$deleted) {
-                     return response()->json(['message' => 'Error deleting the image.'], 500);
-                 }
-             }
-         }
+    try {
+        $designer = Designer::findOrFail($id);
 
-         $designer->delete();
+        // Get the associated user
+        $user = User::findOrFail($designer->user_id);
 
-         return response()->json(['message' => 'Designer and associated image deleted successfully.']);
-     }
+        // Delete the designer's image if it exists
+        if ($designer->image) {
+            $oldImagePath = str_replace('/storage', 'public', $designer->image);
+            if (Storage::exists($oldImagePath)) {
+                $deleted = Storage::delete($oldImagePath);
+                if (!$deleted) {
+                    DB::rollBack();
+                    return response()->json(['message' => 'Error deleting the image.'], 500);
+                }
+            }
+        }
+
+        // Delete the designer
+        $designer->delete();
+
+        // Delete the associated user
+        $user->delete();
+
+        DB::commit();
+
+        return response()->json(['message' => 'Designer, associated user, and image deleted successfully.']);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['message' => 'Error occurred while deleting designer and user: ' . $e->getMessage()], 500);
     }
+}
+}
