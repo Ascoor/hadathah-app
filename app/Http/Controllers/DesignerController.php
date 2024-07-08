@@ -70,13 +70,8 @@ class DesignerController extends Controller
             'skills' => $validatedData['skills'],
         ]);
     
-        // Handle image upload
         if ($request->hasFile('image')) {
-            $directory = 'public/designers';
-            Storage::makeDirectory($directory);
-            $imagePath = $request->file('image')->store($directory);
-            $designer->image = Storage::url($imagePath);
-            $designer->save();
+            $this->handleImageUpload($request, $designer, 'public/designers');
         }
     
         return response()->json([
