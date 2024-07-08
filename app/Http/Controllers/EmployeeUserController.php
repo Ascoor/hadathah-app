@@ -7,13 +7,16 @@ use App\Models\MultiEmployee;
 use App\Models\SaleRep;
 use App\Models\SocialRep;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Traits\HandlesImages;
+use App\Helpers\ConversionHelper;
+use Illuminate\Http\JsonResponse;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
-use App\Helpers\ConversionHelper;
-use Illuminate\Support\Facades\Storage;
-
 class EmployeeUserController extends Controller
 {
     public function index()
@@ -59,119 +62,119 @@ class EmployeeUserController extends Controller
         return response()->json([
             'employeeUsers' => $employeeUsers
         ]);
-    }public function store(Request $request)
+    }
+
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
             'position' => 'required|string',
-            'role' => 'required|integer', // تأكد من أن هذا حقل integer
             'skills' => 'nullable|string',
             'covered_areas' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
         ]);
-    
-        // تحويل الاسم إلى الإنجليزية
+
+        // Convert name to English and generate email
         $nameInEnglish = ConversionHelper::convertNameToEnglish($validatedData['name']);
-    
-        // توليد البريد الإلكتروني بناءً على الاسم باللغة الإنجليزية
-        $email = strtolower(str_replace(' ', '', $nameInEnglish)) . '@hadathah.org'; 
-        $password = Hash::make('password123'); // أو قم بتوليد كلمة مرور قوية
-    
-        // إنشاء المستخدم في جدول users
+        $nameParts = explode(' ', $nameInEnglish);
+        $firstName = strtolower($nameParts[0]);
+        $lastName = strtolower(end($nameParts));
+        $email = $firstName . '.' . $lastName . '-' . strtolower($validatedData['position']) . '@hadathah.org';
+
+        $request->merge(['email' => $email]);
+        $request->validate([
+            'email' => 'required|string|email|max:255|unique:users',
+        ]);
+
+        $validatedData['email'] = $email;
+
+        // Generate password
+        $defaultPasswordPart = substr($validatedData['email'], 0, 5);
+        $password = $defaultPasswordPart . '@2024';
+
+        // Create user
         $user = User::create([
             'name' => $validatedData['name'],
-            'email' => $email,
-            'password' => $password,
-            'role_id' => $validatedData['role'], // تأكد من أن هذا حقل integer
+            'email' => $validatedData['email'],
+            'password' => bcrypt($password),
+            'phone' => $validatedData['phone'],
+            'role_id' => 2
         ]);
-    
-        // إعداد البيانات المشتركة
+
+        // Prepare common data
         $data = [
             'user_id' => $user->id,
             'name' => $validatedData['name'],
             'phone' => $validatedData['phone'],
-            'image' => $validatedData['image'] ?? null,
         ];
-    
-        // حفظ الصورة إذا كانت موجودة
-        if ($request->hasFile('image')) {
-            $directory = 'public/' . strtolower(str_replace(' ', '_', $validatedData['position']));
-            Storage::makeDirectory($directory); 
-            $imagePath = $request->file('image')->store($directory);
-            $data['image'] = Storage::url($imagePath);
-        }
-    
-        // تحديد الجدول المناسب بناءً على position
-        switch ($validatedData['position']) {
-            case 'designers':
-                $data['skills'] = $validatedData['skills'];
-                Designer::create($data);
-                break;
-            case 'sale_reps':
-                $data['covered_areas'] = $validatedData['covered_areas'];
-                SaleRep::create($data);
-                break;
-            case 'social_reps':
-                $data['skills'] = $validatedData['skills'];
-                SocialRep::create($data);
-                break;
-            case 'multi_employees':
-                $data['position'] = $validatedData['position']; // إضافة هذا السطر لضمان وجود الحقل في البيانات المرسلة
-                MultiEmployee::create($data);
-                break;
-        }
-    
-        return response()->json(['message' => 'Employee created successfully']);
-    }
-    public function update(Request $request, $id)
-    {
-        // Find the user and the related record based on the position
-        $user = User::findOrFail($id);
-    
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
-            'position' => 'required|string',
-            'role' => 'required|integer',
-            'skills' => 'nullable|string',
-            'covered_areas' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
-        ]);
-    
-        // Update user's name and email if the name has changed
-        if ($validatedData['name'] !== $user->name) {
-            $nameInEnglish = ConversionHelper::convertNameToEnglish($validatedData['name']);
-            $email = strtolower(str_replace(' ', '', $nameInEnglish)) . '@hadathah.org';
-    
-            $user->update([
-                'name' => $validatedData['name'],
-                'email' => $email,
-                'role_id' => $validatedData['role'],
-            ]);
-        } else {
-            $user->update([
-                'role_id' => $validatedData['role'],
-            ]);
-        }
-    
-        // Common data to be updated
-        $data = [
-            'name' => $validatedData['name'],
-            'phone' => $validatedData['phone'],
-        ];
-    
-        // Handle the image update
+
+        // Save image if present
         if ($request->hasFile('image')) {
             $directory = 'public/' . strtolower(str_replace(' ', '_', $validatedData['position']));
             Storage::makeDirectory($directory);
             $imagePath = $request->file('image')->store($directory);
             $data['image'] = Storage::url($imagePath);
         }
-    
-        // Find and update the record in the appropriate table based on position
+
+        // Determine the correct table based on position
         switch ($validatedData['position']) {
-            case 'designers':
+            case 'designer':
+                $data['skills'] = $validatedData['skills'];
+                $employee = Designer::create($data);
+                break;
+            case 'sale_reps':
+                $data['covered_areas'] = $validatedData['covered_areas'];
+                $employee = SaleRep::create($data);
+                break;
+            case 'social_reps':
+                $data['skills'] = $validatedData['skills'];
+                $employee = SocialRep::create($data);
+                break;
+        }
+
+        return response()->json([
+            'message' => ucfirst($validatedData['position']) . ' created successfully!',
+            'user' => $user,
+            'employee' => $employee
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Find the user and the related record based on the position
+        $user = User::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'phone' => 'required|string|max:255|unique:' . strtolower($user->position) . ',phone,' . $id,
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+            'skills' => 'nullable|string',
+            'covered_areas' => 'nullable|string',
+            'position' => 'required|string',
+        ]);
+
+        // Common data to be updated
+        $data = [
+            'phone' => $validatedData['phone'],
+        ];
+
+        // Handle the image update
+        if ($request->hasFile('image')) {
+            $directory = 'public/' . strtolower(str_replace(' ', '_', $user->position));
+            Storage::makeDirectory($directory);
+            $imagePath = $request->file('image')->store($directory);
+            $data['image'] = Storage::url($imagePath);
+
+            // Delete the old image if it exists
+            $oldImagePath = $user->image ? str_replace('/storage', 'public', $user->image) : null;
+            if ($oldImagePath && Storage::exists($oldImagePath)) {
+                Storage::delete($oldImagePath);
+            }
+        }
+
+        // Find and update the record in the appropriate table based on position
+        switch ($user->position) {
+            case 'designer':
                 $record = Designer::where('user_id', $user->id)->firstOrFail();
                 $data['skills'] = $validatedData['skills'];
                 $record->update($data);
@@ -186,15 +189,56 @@ class EmployeeUserController extends Controller
                 $data['skills'] = $validatedData['skills'];
                 $record->update($data);
                 break;
-            case 'multi_employees':
-                $record = MultiEmployee::where('user_id', $user->id)->firstOrFail();
-                $data['position'] = $validatedData['position'];
-                $record->update($data);
-                break;
         }
-    
-        return response()->json(['message' => 'Employee updated successfully']);
+
+        return response()->json(['message' => ucfirst($user->position) . ' updated successfully.']);
     }
+
+    public function destroy($id): JsonResponse
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = User::findOrFail($id);
+
+            // Determine the correct table based on position and find the record
+            switch ($user->position) {
+                case 'designer':
+                    $employee = Designer::where('user_id', $user->id)->firstOrFail();
+                    break;
+                case 'sale_reps':
+                    $employee = SaleRep::where('user_id', $user->id)->firstOrFail();
+                    break;
+                case 'social_reps':
+                    $employee = SocialRep::where('user_id', $user->id)->firstOrFail();
+                    break;
+                default:
+                    throw new \Exception('Invalid position');
+            }
+
+            // Delete the employee's image if it exists
+            if ($employee->image) {
+                $oldImagePath = str_replace('/storage', 'public', $employee->image);
+                if (Storage::exists($oldImagePath)) {
+                    Storage::delete($oldImagePath);
+                }
+            }
+
+            // Delete the employee record
+            $employee->delete();
+
+            // Delete the associated user
+            $user->delete();
+
+            DB::commit();
+
+            return response()->json(['message' => ucfirst($user->position) . ', associated user, and image deleted successfully.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error occurred while deleting employee and user: ' . $e->getMessage()], 500);
+        }
+    }
+
     
     public function getEmployeesData()
     {
