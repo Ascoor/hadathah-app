@@ -121,13 +121,8 @@ public function update(Request $request, $id)
 
     // Handle image upload
     if ($request->hasFile('image')) {
-        $directory = 'public/designers';
-        Storage::makeDirectory($directory);
-        $imagePath = $request->file('image')->store($directory);
-        $designer->image = Storage::url($imagePath);
-        $designer->save();
+        $this->handleImageUpload($request, $designer, 'public/designers');
     }
-
     return response()->json([
         'message' => 'Designer updated successfully!',
         'designer' => $designer
