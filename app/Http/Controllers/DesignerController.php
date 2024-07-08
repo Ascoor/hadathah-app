@@ -24,7 +24,6 @@ class DesignerController extends Controller
     {
         $this->mailinaboxService = $mailinaboxService;
     }
-
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -33,53 +32,60 @@ class DesignerController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
             'skills' => 'nullable|string',
         ]);
-
+    
+        // Convert name to English if it is in Arabic
         $nameInEnglish = ConversionHelper::convertNameToEnglish($validatedData['name']);
-
-        $email = strtolower(str_replace(' ', '', $nameInEnglish)) . '-designer@hadathah.org';
-
+    
+        // Generate email
+        $nameParts = explode(' ', $nameInEnglish);
+        $firstName = strtolower($nameParts[0]);
+        $lastName = strtolower(end($nameParts));
+        $email = $firstName . '.' . $lastName . '-designer@hadathah.org';
+    
         $request->merge(['email' => $email]);
         $request->validate([
             'email' => 'required|string|email|max:255|unique:users',
         ]);
-
+    
         $validatedData['email'] = $email;
-
-        $defaultPasswordPart = substr($validatedData['email'], 0, 5); 
-        $password = $defaultPasswordPart . '@2024'; 
-
+    
+        // Generate password
+        $defaultPasswordPart = substr($validatedData['email'], 0, 5);
+        $password = $defaultPasswordPart . '@2024';
+    
+        // Create user
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'password' => bcrypt($password), 
+            'password' => bcrypt($password),
             'phone' => $validatedData['phone'],
             'role_id' => 2
         ]);
-
+    
+        // Create designer
         $designer = Designer::create([
             'user_id' => $user->id,
             'name' => $validatedData['name'],
             'phone' => $validatedData['phone'],
             'skills' => $validatedData['skills'],
-
         ]);
-
+    
+        // Handle image upload
         if ($request->hasFile('image')) {
             $directory = 'public/designers';
-            Storage::makeDirectory($directory); 
+            Storage::makeDirectory($directory);
             $imagePath = $request->file('image')->store($directory);
             $designer->image = Storage::url($imagePath);
-            $designer->save(); 
+            $designer->save();
         }
-
-
+    
         return response()->json([
             'message' => 'Designer created successfully!',
             'user' => $user,
             'designer' => $designer
         ]);
     }
-
+    
 
 
     public function index()
@@ -97,54 +103,35 @@ class DesignerController extends Controller
     {
 
     }
-
-public function update(Request $request, Designer $designer)
+public function update(Request $request, $id)
 {
     $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'phone' => 'required|string|max:255|unique:designers,phone,' . $designer->id,
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', 
+        'phone' => 'required|string|max:255|unique:designers,phone,' . $id,
         'skills' => 'nullable|string',
-        'password' => 'nullable|string|min:6', 
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
     ]);
 
-    $dataWithoutImageAndPassword = Arr::except($validatedData, ['image', 'password']);
+    $designer = Designer::findOrFail($id);
+    $user = $designer->user;
 
-    $designer->update($dataWithoutImageAndPassword);
+    $designer->update([
+        'phone' => $validatedData['phone'],
+        'skills' => $validatedData['skills'],
+    ]);
 
-    if (!empty($validatedData['password'])) {
-        $user = $designer->user; 
-        $user->password = Hash::make($validatedData['password']);
-        $user->save();
-    }
-
+    // Handle image upload
     if ($request->hasFile('image')) {
-        try {
-            DB::beginTransaction();
-
-            $oldImagePath = $designer->image ? str_replace('/storage', 'public', $designer->image) : null;
-
-            $imagePath = $request->file('image')->store('public/designers');
-            $designer->image = Storage::url($imagePath);
-
-            $designer->save();
-
-            if ($oldImagePath) {
-                Storage::delete($oldImagePath);
-            }
-
-            DB::commit();
-
-            return response()->json(['message' => 'Designer updated successfully.', 'designer' => $designer]);
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-            return response()->json(['message' => 'Failed to update the Designer image', 'error' => $e->getMessage()], 500);
-        }
-    } else {
-
-        return response()->json(['message' => 'Designer updated successfully without image update.', 'designer' => $designer]);
+        $directory = 'public/designers';
+        Storage::makeDirectory($directory);
+        $imagePath = $request->file('image')->store($directory);
+        $designer->image = Storage::url($imagePath);
+        $designer->save();
     }
+
+    return response()->json([
+        'message' => 'Designer updated successfully!',
+        'designer' => $designer
+    ]);
 }
 
      public function destroy($id): JsonResponse
@@ -165,4 +152,4 @@ public function update(Request $request, Designer $designer)
 
          return response()->json(['message' => 'Designer and associated image deleted successfully.']);
      }
-}
+    }

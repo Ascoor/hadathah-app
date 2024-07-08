@@ -140,4 +140,24 @@ public function resetPassword(Request $request)
     return response()->json(['message' => 'تم إعادة تعيين كلمة المرور بنجاح.']);
 }
 
+public function sendUserResetLinkEmail(Request $request)
+{
+    $request->validate(['user_id' => 'required|exists:users,id']);
+
+    $user = User::where('id', $request->user_id)->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني.'], 404);
+    }
+
+    $token = Str::random(60);
+    $expiresAt = now()->addHour(); // تعيين صلاحية الرمز إلى ساعة واحدة
+    $user->update(['reset_token' => $token, 'reset_token_expires_at' => $expiresAt]);
+
+    $resetUrl = "https://app.hadathah.org/reset-password?token=$token";
+
+    Mail::to($user->email)->send(new ResetPasswordMail($resetUrl));
+
+    return response()->json(['message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.']);
+}
 }

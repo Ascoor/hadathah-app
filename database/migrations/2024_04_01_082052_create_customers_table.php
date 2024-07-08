@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('contact_number');
             $table->string('gender')->nullable();
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->string('city')->nullable();
             $table->string('country');
             $table->text('notes')->nullable();

@@ -38,7 +38,7 @@ class CustomerController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:customers',
+            'email' => 'nullable|string|email|max:255|unique:customers',
             'contact_number' => 'required|regex:/^01\d{9}$/',
             'gender' => 'required|in:ذكر,أنثى',
             'address' => 'required|string|max:255',
@@ -88,7 +88,7 @@ class CustomerController extends Controller
         'name' => 'required|string|max:255',
         'notes' => 'nullable|string|max:255',
         'address' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255',
+        'email' => 'nullable|string|email|max:255|unique:customers',
         'contact_number' => 'required|regex:/^01\d{9}$/',
         'contact_number' => 'required|regex:/^(\+?2)?01\d{9}$/',
         'gender' => 'required|in:ذكر,أنثى',
