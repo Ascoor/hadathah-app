@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
-use App\Models\Designer;
 use App\Helpers\ConversionHelper;
 use App\Models\User;
 
