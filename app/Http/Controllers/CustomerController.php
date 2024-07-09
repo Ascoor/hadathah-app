@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\PhoneNumber;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 
@@ -39,7 +40,8 @@ class CustomerController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:customers',
-            'contact_number' => 'required|regex:/^01\d{9}$/',
+            
+            'contact_number' => ['required', 'string', 'max:255', new PhoneNumber], // Required phone validation
             'gender' => 'required|in:ذكر,أنثى',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
@@ -89,8 +91,8 @@ class CustomerController extends Controller
         'notes' => 'nullable|string|max:255',
         'address' => 'required|string|max:255',
         'email' => 'nullable|string|email|max:255|unique:customers',
-        'contact_number' => 'required|regex:/^01\d{9}$/',
-        'contact_number' => 'required|regex:/^(\+?2)?01\d{9}$/',
+        'contact_number' => ['required', 'string', 'max:255', new PhoneNumber], // Required phone validation
+        
         'gender' => 'required|in:ذكر,أنثى',
         'city' => 'required|string|max:255',
         'country' => 'required|string|max:255',

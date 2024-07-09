@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Helpers\ConversionHelper;
 use App\Models\User;
 
+use App\Rules\PhoneNumber;
 use App\Http\Controllers\Traits\HandlesImages;
 class MultiEmployeeController extends Controller
 {  use HandlesImages;
@@ -48,7 +49,8 @@ class MultiEmployeeController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:11',
+            'phone' => ['required', 'string', 'max:255', new PhoneNumber], // استخدام قاعدة التحقق المخصصة
+           
             'employee_position' => 'required|string',
                  'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
         ]);
@@ -101,11 +103,12 @@ class MultiEmployeeController extends Controller
           public function update(Request $request, MultiEmployee $multiEmployee): JsonResponse
           {
               $validatedData = $request->validate([
-                 'phone' => 'required|string|max:11|unique:multi_employees,phone,' . $multiEmployee->id,
-                  'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
-                  'employee_position' => 'nullable|string',
-              ]);
-      
+                'phone' => ['required', 'string', 'max:255', new PhoneNumber], // Required phone validation
+                'employee_position' => 'required|string',
+                'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // Image validation
+            ]);
+    
+    
               // Use Arr::except to remove the 'image' key from the validated data array before updating the multiEmployee
               $dataWithoutImage = Arr::except($validatedData, ['image']);
       
