@@ -12,14 +12,14 @@ class DatabaseSeeder extends Seeder
         
         $this->call(RolesTableSeeder::class);
         $this->call(PermissionsTableSeeder::class);
-        $this->call(UsersTableSeeder::class);
-        
+        $this->call(MultiEmployeesTableSeeder::class);
         // $this->call(CustomerSeeder::class);
         // $this->call(DesignersTableSeeder::class);
         
         // $this->call(SaleRepsTableSeeder::class);
+        // $this->call(UsersTableSeeder::class);
+        
         // $this->call(SocialRepsTableSeeder::class);
-        // $this->call(MultiEmployeesTableSeeder::class);
         // $this->call(CategoriesTableSeeder::class);
         // $this->call(ProductsTableSeeder::class);
         // $this->call(OffersTableSeeder::class);

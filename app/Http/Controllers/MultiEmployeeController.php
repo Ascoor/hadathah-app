@@ -48,7 +48,7 @@ class MultiEmployeeController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
+            'phone' => 'required|string|max:11',
             'employee_position' => 'required|string',
                  'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
         ]);
@@ -56,7 +56,7 @@ class MultiEmployeeController extends Controller
         $nameParts = explode(' ', $nameInEnglish);
         $firstName = strtolower($nameParts[0]);
         $lastName = strtolower(end($nameParts));
-        $email = $firstName . '.' . $lastName . '-saleRep@hadathah.org';
+        $email = $firstName . '.' . $lastName . '-multiEmployee@hadathah.org';
       
         $request->merge(['email' => $email]);
         $request->validate([
@@ -96,17 +96,17 @@ class MultiEmployeeController extends Controller
           return response()->json([
               'message' => 'multi Employees created successfully!',
               'user' => $user,
-              'saleRep' => $multiEmployee
+              'multiEmployee' => $multiEmployee
           ]);}
           public function update(Request $request, MultiEmployee $multiEmployee): JsonResponse
           {
               $validatedData = $request->validate([
-                 'phone' => 'required|string|max:255|unique:sale_reps,phone,' . $multiEmployee->id,
+                 'phone' => 'required|string|max:11|unique:multi_employees,phone,' . $multiEmployee->id,
                   'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
                   'employee_position' => 'nullable|string',
               ]);
       
-              // Use Arr::except to remove the 'image' key from the validated data array before updating the saleRep
+              // Use Arr::except to remove the 'image' key from the validated data array before updating the multiEmployee
               $dataWithoutImage = Arr::except($validatedData, ['image']);
       
               // Update multi Employee with the validated data (except the image)
@@ -141,7 +141,7 @@ class MultiEmployeeController extends Controller
                   }
               } else {
                   // If no image is part of the request, the other updates have already been saved
-                  return response()->json(['message' => 'multi Employee updated successfully without image update.', 'saleRep' => $multiEmployee]);
+                  return response()->json(['message' => 'multi Employee updated successfully without image update.', 'multiEmployee' => $multiEmployee]);
               }
           }
     

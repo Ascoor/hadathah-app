@@ -94,6 +94,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(SocialRep::class, 'user_id');
     }
+
+    public function multiEmployee()
+    {
+        return $this->hasOne(MultiEmployee::class, 'user_id');
+    }
     public function getUserImageAttribute()
     {
         if ($this->designer) {

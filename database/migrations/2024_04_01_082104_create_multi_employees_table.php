@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('email')->unique()->nullable();
             $table->string('image')->nullable(); // Assuming the image may be optional
-            $table->text('employee_position'); // Text field for regions or areas covered by the sales rep
+            $table->string('employee_position'); // Text field for regions or areas covered by the sales rep
             $table->timestamps();
         });
         

@@ -20,49 +20,51 @@ use Illuminate\Support\Facades\Hash;
 class EmployeeUserController extends Controller
 {
     public function index()
-    {
-        // Fetch all employees with their user and role details
-        $designers = Designer::with('user.role')->get();
-        $saleReps = SaleRep::with('user.role')->get();
-        $socialReps = SocialRep::with('user.role')->get();
-        $multiEmployees = MultiEmployee::with('user.role')->get();
- 
-        // Create a unified list of all employee users
-        $employeeUsers = collect($designers)
-            ->merge($saleReps)
-            ->merge($multiEmployees)
-            ->merge($socialReps)
-            ->map(function ($employee) {
-                $position = null;
- 
-                if ($employee instanceof Designer) {
-                    $position = 'مصمم';
-                } elseif ($employee instanceof SaleRep) {
-                    $position = 'مندوب مبيعات';
-                } elseif ($employee instanceof SocialRep) {
-                    $position = 'مندوب تسويق';
-                } elseif ($employee instanceof MultiEmployee) {
-                    $position = 'موظف إدارى';
-                }
- 
-                return [
-                    'id' => $employee->user->id,
-                    'name' => $employee->user->name,
-                    'email' => $employee->user->email,
-                    'role' => $employee->user->role->arabic_name,
-                    'position' => $position ?: $employee->position, // Use predefined position or fallback to employee's position attribute
-                    'phone' => $employee->phone,
-                    'covered_areas' => $employee->covered_areas,
-                    'skills' => $employee->skills,
-                    'created_at' => $employee->created_at,
-                    'image' => $employee->image // Assuming the image attribute is correctly set up
-                ];
-            });
- 
-        return response()->json([
-            'employeeUsers' => $employeeUsers
-        ]);
-    }
+{
+    // Fetch all employees with their user and role details
+    $designers = Designer::with('user.role')->get();
+    $saleReps = SaleRep::with('user.role')->get();
+    $socialReps = SocialRep::with('user.role')->get();
+    $multiEmployees = MultiEmployee::with('user.role')->get();
+
+    // Create a unified list of all employee users
+    $employeeUsers = collect($designers)
+        ->merge($saleReps)
+        ->merge($socialReps)
+        ->merge($multiEmployees)
+        ->map(function ($employee) {
+            $position = null;
+
+            if ($employee instanceof Designer) {
+                $position = 'مصمم';
+            } elseif ($employee instanceof SaleRep) {
+                $position = 'مندوب مبيعات';
+            } elseif ($employee instanceof SocialRep) {
+                $position = 'مندوب تسويق';
+            } elseif ($employee instanceof MultiEmployee) {
+                $position = 'موظف إدارى';
+            }
+
+            return [
+                'id' => $employee->user->id,
+                'name' => $employee->user->name,
+                'email' => $employee->user->email,
+                'role' => $employee->user->role->arabic_name,
+                'position' => $position,
+                'phone' => $employee->phone,
+                'covered_areas' => $employee->covered_areas,
+                'skills' => $employee->skills,
+                'employee_position' => $employee->employee_position,
+                'created_at' => $employee->created_at,
+                'image' => $employee->image
+            ];
+        });
+
+    return response()->json([
+        'employeeUsers' => $employeeUsers
+    ]);
+}
+
 
     public function store(Request $request)
     {
@@ -133,7 +135,7 @@ class EmployeeUserController extends Controller
                 $employee = SocialRep::create($data);
                 break;
             case 'multi_employees':
-                $data['employee_position'] = $validatedData['e'];
+                $data['employee_position'] = $validatedData['employee_position'];
                 $employee = MultiEmployee::create($data);
                 break;
         }
@@ -155,8 +157,7 @@ class EmployeeUserController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
             'skills' => 'nullable|string',
             'covered_areas' => 'nullable|string',
-
-            'employee_position' => 'required|string',
+            'employee_position' => 'nullable|string',
             'position' => 'required|string',
         ]);
 
@@ -205,63 +206,59 @@ class EmployeeUserController extends Controller
 
         return response()->json(['message' => ucfirst($user->position) . ' updated successfully.']);
     }
-
     public function destroy($id): JsonResponse
-    {
-        DB::beginTransaction();
+{
+    DB::beginTransaction();
 
-        try {
-            $user = User::findOrFail($id);
+    try {
+        $user = User::findOrFail($id);
 
-            // Determine the correct table based on position and find the record
-            switch ($user->position) {
-                case 'designer':
-                    $employee = Designer::where('user_id', $user->id)->firstOrFail();
-                    break;
-                case 'sale_reps':
-                    $employee = SaleRep::where('user_id', $user->id)->firstOrFail();
-                    break;
-                case 'social_reps':
-                    $employee = SocialRep::where('user_id', $user->id)->firstOrFail();
-                    break;
-                case 'multi_employees':
-                    $employee = MultiEmployee::where('user_id', $user->id)->firstOrFail();
-                    break;
-                default:
-                    throw new \Exception('Invalid position');
-            }
+        // تحديد المنصب بناءً على السجلات المرتبطة
+        $position = null;
+        $employee = null;
 
-            // Delete the employee's image if it exists
-            if ($employee->image) {
-                $oldImagePath = str_replace('/storage', 'public', $employee->image);
-                if (Storage::exists($oldImagePath)) {
-                    Storage::delete($oldImagePath);
-                }
-            }
-
-            // Delete the employee record
-            $employee->delete();
-
-            // Delete the associated user
-            $user->delete();
-
-            DB::commit();
-
-            return response()->json(['message' => ucfirst($user->position) . ', associated user, and image deleted successfully.']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Error occurred while deleting employee and user: ' . $e->getMessage()], 500);
+        if ($employee = Designer::where('user_id', $user->id)->first()) {
+            $position = 'مصمم';
+        } elseif ($employee = SaleRep::where('user_id', $user->id)->first()) {
+            $position = 'مندوب مبيعات';
+        } elseif ($employee = SocialRep::where('user_id', $user->id)->first()) {
+            $position = 'مندوب تسويق';
+        } elseif ($employee = MultiEmployee::where('user_id', $user->id)->first()) {
+            $position = 'موظف إدارى';
+        } else {
+            throw new \Exception('Invalid position or no employee record found');
         }
-    }
 
-    
+        // حذف صورة الموظف إذا كانت موجودة
+        if ($employee->image) {
+            $oldImagePath = str_replace('/storage', 'public', $employee->image);
+            if (Storage::exists($oldImagePath)) {
+                Storage::delete($oldImagePath);
+            }
+        }
+
+        // حذف سجل الموظف
+        $employee->delete();
+
+        // حذف المستخدم المرتبط
+        $user->delete();
+
+        DB::commit();
+
+        return response()->json(['message' => ucfirst($position) . ', associated user, and image deleted successfully.']);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['message' => 'Error occurred while deleting employee and user: ' . $e->getMessage()], 500);
+    }
+}
+
     public function getEmployeesData()
     {
         $designers = Designer::all();
         $saleReps = SaleRep::all();
         $socialReps = SocialRep::all();
         $multiEmployees = MultiEmployee::all();
-    
+
         return response()->json([
             'designers' => $designers,
             'saleReps' => $saleReps,
@@ -269,5 +266,4 @@ class EmployeeUserController extends Controller
             'multiEmployees' => $multiEmployees
         ]);
     }
-
-}    
+}

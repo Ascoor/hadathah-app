@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Designer;
+use App\Models\MultiEmployee;
 use App\Models\Offer;
 use App\Models\Product;
 use App\Models\Order;
@@ -18,8 +19,9 @@ class DashboardController extends Controller
         $designersCount = Designer::count();
         $saleRepsCount = SaleRep::count();
         $socialRepsCount = SocialRep::count();
+        $multiEmployeeCount = MultiEmployee::count();
      
-        $employeesCount = $designersCount + $saleRepsCount + $socialRepsCount;
+        $employeesCount = $designersCount + $saleRepsCount + $socialRepsCount + $multiEmployeeCount;
         return response()->json([
             'customers' => Customer::count(),
             'products' => Product::count(),

@@ -50,38 +50,18 @@ class UserController extends Controller
             throw new \Exception('Failed to add user to Mail-in-a-Box');
         }
     }
-
-    public function getUserImage($userId)
+    public function show($id)
     {
-        // جلب المستخدم من الجدول الأساسي
-        $user = User::find($userId);
-    
-        if ($user) {
-            // جلب الصورة من جدول المصممين إذا كانت موجودة
-            $designer = Designer::where('user_id', $userId)->first();
-            if ($designer && $designer->image) {
-                return response()->json(['image' => $designer->image]);
-            }
-    
-            // جلب الصورة من جدول ممثلي المبيعات إذا كانت موجودة
-            $saleRep = SaleRep::where('user_id', $userId)->first();
-            if ($saleRep && $saleRep->image) {
-                return response()->json(['image' => $saleRep->image]);
-            }
-    
-            // جلب الصورة من جدول ممثلي الشبكات الاجتماعية إذا كانت موجودة
-            $socialRep = SocialRep::where('user_id', $userId)->first();
-            if ($socialRep && $socialRep->image) {
-                return response()->json(['image' => $socialRep->image]);
-            }
-    
-            // إذا لم يتم العثور على أي صورة في الجداول المختلفة
-            return response()->json(['image' => null], 404);
-        } else {
-            // إذا لم يتم العثور على المستخدم
-            return response()->json(null, 404);
-        }
+        $user = User::with(['designer', 'saleRep', 'socialRep', 'multiEmployee'])->findOrFail($id);
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'user_image' => $user->user_image, // هذا الحقل يحتوي على الصورة الصحيحة
+        ]);
     }
+    
     
 
 }
