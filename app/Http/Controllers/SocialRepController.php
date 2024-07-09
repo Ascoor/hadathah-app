@@ -42,7 +42,7 @@ class SocialRepController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255|unique:social_reps',
+            'phone' => 'required|string|max:11|unique:social_reps',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
             'skills' => 'nullable|string',
         ]);
