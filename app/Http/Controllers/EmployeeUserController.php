@@ -71,6 +71,7 @@ class EmployeeUserController extends Controller
             'phone' => 'required|string|max:255',
             'position' => 'required|string',
             'skills' => 'nullable|string',
+            'employee_position' => 'nullable|string',
             'covered_areas' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
         ]);
@@ -131,6 +132,10 @@ class EmployeeUserController extends Controller
                 $data['skills'] = $validatedData['skills'];
                 $employee = SocialRep::create($data);
                 break;
+            case 'multi_employees':
+                $data['employee_position'] = $validatedData['e'];
+                $employee = MultiEmployee::create($data);
+                break;
         }
 
         return response()->json([
@@ -150,6 +155,8 @@ class EmployeeUserController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
             'skills' => 'nullable|string',
             'covered_areas' => 'nullable|string',
+
+            'employee_position' => 'required|string',
             'position' => 'required|string',
         ]);
 
@@ -189,6 +196,11 @@ class EmployeeUserController extends Controller
                 $data['skills'] = $validatedData['skills'];
                 $record->update($data);
                 break;
+            case 'multi_employees':
+                $record = MultiEmployee::where('user_id', $user->id)->firstOrFail();
+                $data['employee_position'] = $validatedData['employee_position'];
+                $record->update($data);
+                break;
         }
 
         return response()->json(['message' => ucfirst($user->position) . ' updated successfully.']);
@@ -211,6 +223,9 @@ class EmployeeUserController extends Controller
                     break;
                 case 'social_reps':
                     $employee = SocialRep::where('user_id', $user->id)->firstOrFail();
+                    break;
+                case 'multi_employees':
+                    $employee = MultiEmployee::where('user_id', $user->id)->firstOrFail();
                     break;
                 default:
                     throw new \Exception('Invalid position');

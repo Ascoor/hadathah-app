@@ -15,7 +15,7 @@ class MultiEmployee extends Model
         'email',
         'user_id',
         'image',
-        'position',
+        'employee_position',
     ];
 
     public function orders()

@@ -49,7 +49,7 @@ class MultiEmployeeController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
-            'position' => 'required|string',
+            'employee_position' => 'required|string',
                  'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
         ]);
         $nameInEnglish = ConversionHelper::convertNameToEnglish($validatedData['name']);
@@ -83,7 +83,7 @@ class MultiEmployeeController extends Controller
           'user_id' => $user->id,
           'name' => $validatedData['name'],
           'phone' => $validatedData['phone'],
-          'position' => $validatedData['position'],
+          'employee_position' => $validatedData['employee_position'],
           
           
               ]);
@@ -103,7 +103,7 @@ class MultiEmployeeController extends Controller
               $validatedData = $request->validate([
                  'phone' => 'required|string|max:255|unique:sale_reps,phone,' . $multiEmployee->id,
                   'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
-                  'position' => 'nullable|string',
+                  'employee_position' => 'nullable|string',
               ]);
       
               // Use Arr::except to remove the 'image' key from the validated data array before updating the saleRep
