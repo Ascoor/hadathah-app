@@ -32,7 +32,7 @@ class MultiEmployeesTableSeeder extends Seeder
             [
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'password' => Hash::make('Kamel@1984'), // Consider setting a more secure, dynamically generated password
+                'password' => Hash::make('Kamel@1986'), // Consider setting a more secure, dynamically generated password
                 'role_id' => $role_id,
             ]
         );
