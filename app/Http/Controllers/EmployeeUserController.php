@@ -6,7 +6,7 @@ use App\Models\Designer;
 use App\Models\MultiEmployee;
 use App\Models\SaleRep;
 use App\Models\SocialRep;
-
+use App\Rules\PhoneNumber;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -70,7 +70,7 @@ class EmployeeUserController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
+            'phone' => ['required', 'string', 'max:255', new PhoneNumber], // استخدام قاعدة التحقق المخصصة
             'position' => 'required|string',
             'skills' => 'nullable|string',
             'employee_position' => 'nullable|string',

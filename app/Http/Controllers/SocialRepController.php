@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Traits\HandlesImages;
 use App\Helpers\ConversionHelper;
 use Illuminate\Http\JsonResponse;
-
+use App\Rules\PhoneNumber;
 class SocialRepController extends Controller
 {
     use HandlesImages;
@@ -42,8 +42,8 @@ class SocialRepController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:11|unique:social_reps',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
+            'phone' => ['required', 'string', 'max:255', new PhoneNumber], // استخدام قاعدة التحقق المخصصة
+             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024', // حجم الصورة بكيلوبايت
             'skills' => 'nullable|string',
         ]);
 

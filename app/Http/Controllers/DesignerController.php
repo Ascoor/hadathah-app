@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
-
+use App\Rules\PhoneNumber;
 use App\Http\Controllers\Traits\HandlesImages;
 class DesignerController extends Controller
 {
@@ -29,8 +29,8 @@ class DesignerController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:11|unique:designers',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+            'phone' => ['required', 'string', 'max:255', new PhoneNumber], // استخدام قاعدة التحقق المخصصة
+             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
             'skills' => 'nullable|string',
         ]);
     
