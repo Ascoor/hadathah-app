@@ -86,13 +86,17 @@ Route::get('/permissions/stream/{userId}', [PermissionController::class, 'stream
 
 // users routes
 Route::get('/user-image/{userId}', [UserController::class, 'getUserImage']);
+// user email
+Route::post('/user-email/{userId}', [UserController::class, 'updateUserEmail']);
 
 
 // Sale Rep routes
 Route::get('/sale-rep/offers/{saleRepId}', [SaleRepController::class, 'getOffersBySaleRep']);
 
 
+//employee-users CRUD
 
+Route::post('/employee-users/{userId}', [EmployeeUserController::class, 'updateUserEmail']);
 
 
 });

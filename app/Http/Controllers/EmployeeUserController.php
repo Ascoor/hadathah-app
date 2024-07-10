@@ -73,6 +73,7 @@ class EmployeeUserController extends Controller
             'phone' => ['required', 'string', 'max:255', new PhoneNumber], // استخدام قاعدة التحقق المخصصة
             'position' => 'required|string',
             'skills' => 'nullable|string',
+            'email' => 'required|string|email|max:255|unique:users',
             'employee_position' => 'nullable|string',
             'covered_areas' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
@@ -146,111 +147,34 @@ class EmployeeUserController extends Controller
             'employee' => $employee
         ]);
     }
-
-    public function update(Request $request, $id)
+    
+    public function updateUserEmail(Request $request, $id)
     {
         // Find the user and the related record based on the position
         $user = User::findOrFail($id);
-
+    
         $validatedData = $request->validate([
-            'phone' => 'required|string|max:255|unique:' . strtolower($user->position) . ',phone,' . $id,
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
-            'skills' => 'nullable|string',
-            'covered_areas' => 'nullable|string',
-            'employee_position' => 'nullable|string',
-            'position' => 'required|string',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'role' => 'required|in:1,2',
         ]);
-
-        // Common data to be updated
+    
+        // Extract the first part of the email and append the domain
+        $emailPrefix = explode('@', $validatedData['email'])[0];
+        $validatedData['email'] = $emailPrefix . '@hadathah.org';
+    
+        // Data to be updated
         $data = [
-            'phone' => $validatedData['phone'],
+            'email' => $validatedData['email'],
+            'role_id' => $validatedData['role'], // assuming the column is named 'role_id'
         ];
-
-        // Handle the image update
-        if ($request->hasFile('image')) {
-            $directory = 'public/' . strtolower(str_replace(' ', '_', $user->position));
-            Storage::makeDirectory($directory);
-            $imagePath = $request->file('image')->store($directory);
-            $data['image'] = Storage::url($imagePath);
-
-            // Delete the old image if it exists
-            $oldImagePath = $user->image ? str_replace('/storage', 'public', $user->image) : null;
-            if ($oldImagePath && Storage::exists($oldImagePath)) {
-                Storage::delete($oldImagePath);
-            }
-        }
-
-        // Find and update the record in the appropriate table based on position
-        switch ($user->position) {
-            case 'designer':
-                $record = Designer::where('user_id', $user->id)->firstOrFail();
-                $data['skills'] = $validatedData['skills'];
-                $record->update($data);
-                break;
-            case 'sale_reps':
-                $record = SaleRep::where('user_id', $user->id)->firstOrFail();
-                $data['covered_areas'] = $validatedData['covered_areas'];
-                $record->update($data);
-                break;
-            case 'social_reps':
-                $record = SocialRep::where('user_id', $user->id)->firstOrFail();
-                $data['skills'] = $validatedData['skills'];
-                $record->update($data);
-                break;
-            case 'multi_employees':
-                $record = MultiEmployee::where('user_id', $user->id)->firstOrFail();
-                $data['employee_position'] = $validatedData['employee_position'];
-                $record->update($data);
-                break;
-        }
-
-        return response()->json(['message' => ucfirst($user->position) . ' updated successfully.']);
+    
+        // Update the user's email and role_id
+        $user->update($data);
+    
+        return response()->json(['message' => 'User updated successfully.']);
     }
-    public function destroy($id): JsonResponse
-{
-    DB::beginTransaction();
+    
 
-    try {
-        $user = User::findOrFail($id);
-
-        // تحديد المنصب بناءً على السجلات المرتبطة
-        $position = null;
-        $employee = null;
-
-        if ($employee = Designer::where('user_id', $user->id)->first()) {
-            $position = 'مصمم';
-        } elseif ($employee = SaleRep::where('user_id', $user->id)->first()) {
-            $position = 'مندوب مبيعات';
-        } elseif ($employee = SocialRep::where('user_id', $user->id)->first()) {
-            $position = 'مندوب تسويق';
-        } elseif ($employee = MultiEmployee::where('user_id', $user->id)->first()) {
-            $position = 'موظف إدارى';
-        } else {
-            throw new \Exception('Invalid position or no employee record found');
-        }
-
-        // حذف صورة الموظف إذا كانت موجودة
-        if ($employee->image) {
-            $oldImagePath = str_replace('/storage', 'public', $employee->image);
-            if (Storage::exists($oldImagePath)) {
-                Storage::delete($oldImagePath);
-            }
-        }
-
-        // حذف سجل الموظف
-        $employee->delete();
-
-        // حذف المستخدم المرتبط
-        $user->delete();
-
-        DB::commit();
-
-        return response()->json(['message' => ucfirst($position) . ', associated user, and image deleted successfully.']);
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json(['message' => 'Error occurred while deleting employee and user: ' . $e->getMessage()], 500);
-    }
-}
 
     public function getEmployeesData()
     {
@@ -265,5 +189,31 @@ class EmployeeUserController extends Controller
             'socialReps' => $socialReps,
             'multiEmployees' => $multiEmployees
         ]);
+    }
+    public function destroy($id)
+    {
+
+    // Find the user
+    $user = User::findOrFail($id);
+
+    // Delete related records in respective tables
+    if ($user->designer()->exists()) {
+        $user->designer()->delete();
+    }
+    if ($user->saleRep()->exists()) {
+        $user->saleRep()->delete();
+    }
+    if ($user->socialRep()->exists()) {
+        $user->socialRep()->delete();
+    }
+    if ($user->multiEmployee()->exists()) {
+        $user->multiEmployee()->delete();
+    }
+
+    // Delete the user
+    $user->delete();
+
+    return response()->json(['message' => 'User and related records deleted successfully.']);
+
     }
 }
