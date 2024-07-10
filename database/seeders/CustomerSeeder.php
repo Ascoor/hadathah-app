@@ -23,7 +23,7 @@ public function run()
         DB::table('customers')->insert([
             'name' => $faker->name,
             'address' => $faker->address,
-            'contact_number' => $faker->unique()->phoneNumber,
+            'phone' => $faker->unique()->phoneNumber,
             'gender' => $faker->randomElement(['ذكر', 'أنثى']),
             'email' => $faker->unique()->safeEmail,
             'city' => $faker->city,

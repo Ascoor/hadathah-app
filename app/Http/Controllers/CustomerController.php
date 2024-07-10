@@ -41,7 +41,7 @@ class CustomerController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:customers',
             
-            'contact_number' => ['required', 'string', 'max:255', new PhoneNumber], // Required phone validation
+            'phone' => ['required', 'string', 'max:255', new PhoneNumber], // Required phone validation
             'gender' => 'required|in:ذكر,أنثى',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
@@ -91,7 +91,7 @@ class CustomerController extends Controller
         'notes' => 'nullable|string|max:255',
         'address' => 'required|string|max:255',
         'email' => 'nullable|string|email|max:255|unique:customers',
-        'contact_number' => ['required', 'string', 'max:255', new PhoneNumber], // Required phone validation
+        'phone' => ['required', 'string', 'max:255', new PhoneNumber], // Required phone validation
         
         'gender' => 'required|in:ذكر,أنثى',
         'city' => 'required|string|max:255',
