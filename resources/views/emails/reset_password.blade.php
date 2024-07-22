@@ -7,32 +7,18 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
     <style>
         :root {
-            --hadathah-cyan: #4A90E2;
+            --hadathah-cyan: #E6E6FA;
             --hadathah-dark-cyan: #3D7EBB;
             --text-white: #FFFFFF;
-            --bg-gradient-start: #4A00E0;
-            --bg-gradient-end: #8E2DE2;
+            --bg-gradient-start: #4B0082;
+            --bg-gradient-end: #8A2BE2;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --button-gradient-start: #6A5ACD;
+            --button-gradient-end: #483D8B;
         }
 
         body {
             font-family: 'Cairo', sans-serif;
-        }
-
-        .active-button {
-            background-color: var(--hadathah-cyan);
-            color: var(--text-white);
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            text-decoration: none;
-        }
-
-        .active-button:hover {
-            background-color: var(--hadathah-dark-cyan);
-        }
-
-        .background-gradient {
             background: linear-gradient(to right, var(--bg-gradient-start), var(--bg-gradient-end));
             color: var(--text-white);
             min-height: 100vh;
@@ -42,19 +28,40 @@
             text-align: center;
         }
 
+        .active-button {
+            background: linear-gradient(to right, var(--button-gradient-start), var(--button-gradient-end));
+            color: var(--text-white);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s ease, transform 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        .active-button:hover {
+            background: linear-gradient(to right, var(--button-gradient-end), var(--button-gradient-start));
+            transform: translateY(-2px);
+        }
+
         .content {
             padding: 20px;
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px var(--shadow-color);
+            color: #000;
         }
 
         h1 {
             margin-bottom: 20px;
+            color: #000;
+            text-shadow: 1px 1px 2px var(--shadow-color);
         }
 
         p {
             margin-bottom: 20px;
+            color: #000;
+            text-shadow: 1px 1px 2px var(--shadow-color);
         }
 
         .logo {
@@ -64,13 +71,11 @@
     </style>
 </head>
 <body>
-    <div class="background-gradient">
-        <div class="content">
-            <img src="/logo.png" alt="Hadathah Logo" class="logo">
-            <h1>مرحبًا بك،</h1>
-            <p>يمكنك إعادة تعيين كلمة المرور لحسابك بالضغط على زر تفعيل الحساب</p>
-            <a href="{{ $resetUrl }}" class="active-button">إعادة تعيين كلمة المرور</a>
-        </div>
+    <div class="content">
+        <img src="https://api.hadathah.org/logo.png" alt="Hadathah Logo" class="logo">
+        <h1>مرحبًا بك،</h1>
+        <p>يمكنك إعادة تعيين كلمة المرور لحسابك بالضغط على زر تفعيل الحساب</p>
+        <a href="{{ $resetUrl }}" class="active-button">إعادة تعيين كلمة المرور</a>
     </div>
 </body>
 </html>
