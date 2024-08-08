@@ -14,15 +14,15 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionsTableSeeder::class);
         $this->call(MultiEmployeesTableSeeder::class);
         $this->call(CustomerSeeder::class);
-        // $this->call(DesignersTableSeeder::class);
+        $this->call(DesignersTableSeeder::class);
         
-        // $this->call(SaleRepsTableSeeder::class);
+        $this->call(SaleRepsTableSeeder::class);
         // $this->call(UsersTableSeeder::class);
         
-        // $this->call(SocialRepsTableSeeder::class);
-        // $this->call(CategoriesTableSeeder::class);
-        // $this->call(ProductsTableSeeder::class);
-        // $this->call(OffersTableSeeder::class);
+        $this->call(SocialRepsTableSeeder::class);
+        $this->call(CategoriesTableSeeder::class);
+        $this->call(ProductsTableSeeder::class);
+        $this->call(OffersTableSeeder::class);
         $this->call(UserPermissionsTableSeeder::class);
         // Automatically run the Passport install command after seeding
         Artisan::call('passport:install', ['--force' => true]);

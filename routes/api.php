@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\SaleRepController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
@@ -98,5 +99,12 @@ Route::get('/sale-rep/offers/{saleRepId}', [SaleRepController::class, 'getOffers
 
 Route::post('/employee-users/{userId}', [EmployeeUserController::class, 'updateUserEmail']);
 
+
+// Invoice Routes CRUD
+
+Route::get('/invoices', [InvoiceController::class, 'index']);
+Route::post('/invoices', [InvoiceController::class, 'store']);
+
+Route::get('/invoices/{orderId}/check-invoice', [InvoiceController::class, 'checkInvoice']);
 
 });

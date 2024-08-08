@@ -20,6 +20,8 @@ class Order extends Model
         'discount_rate',
         'total_final',
         'payment_status',
+        'payment_type',
+        'payment_method',
         'time_plementation_range',
         'order_status',
         'updated_by',
@@ -61,5 +63,8 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
-    
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
 }

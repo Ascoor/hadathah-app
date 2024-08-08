@@ -38,71 +38,72 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:customers',
             'email' => 'nullable|string|email|max:255|unique:customers',
-            
-            'phone' => ['required', 'string', 'max:255', new PhoneNumber], // Required phone validation
+            'phone' => ['required', 'string', 'max:255'], // Remove the PhoneNumber rule temporarily
             'gender' => 'required|in:ذكر,أنثى',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'country' => 'required|string|max:255',
             'notes' => 'nullable|string|max:255',
         ]);
-    
+
+        // Format phone number
+        $validatedData['phone'] = $this->formatPhoneNumber($validatedData['phone']);
 
         $customer = Customer::create($validatedData);
         return response()->json($customer, 201);
     }
 
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
-{
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'notes' => 'nullable|string|max:255',
-        'address' => 'required|string|max:255',
-        'email' => 'nullable|string|email|max:255|unique:customers',
-        'phone' => ['required', 'string', 'max:255', new PhoneNumber], // Required phone validation
-        
-        'gender' => 'required|in:ذكر,أنثى',
-        'city' => 'required|string|max:255',
-        'country' => 'required|string|max:255',
-    ]);
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:customers,id,' . $id,
+            'notes' => 'nullable|string|max:255',
+            'address' => 'required|string|max:255',
+            'email' => 'nullable|string|email|max:255|unique:customers',
+            'phone' => ['required', 'string', 'max:255'], // Remove the PhoneNumber rule temporarily
+            'gender' => 'required|in:ذكر,أنثى',
+            'city' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+        ]);
 
-    $customer = Customer::findOrFail($id); // Ensure the customer exists, or fail with 404
-    $customer->update($validatedData);
+        // Format phone number
+        $validatedData['phone'] = $this->formatPhoneNumber($validatedData['phone']);
 
-    return response()->json($customer, 200);
-}
+        $customer = Customer::findOrFail($id); // Ensure the customer exists, or fail with 404
+        $customer->update($validatedData);
+
+        return response()->json($customer, 200);
+    }
+
+    private function formatPhoneNumber($phone)
+    {
+        // Remove any spaces from the phone number
+        $phone = str_replace(' ', '', $phone);
+
+        // Check if phone starts with '+', if not, add it or convert '00' to '+'
+        if (!str_starts_with($phone, '+')) {
+            if (str_starts_with($phone, '00')) {
+                $phone = '+' . substr($phone, 2);
+            } else {
+                $phone = '+' . $phone;
+            }
+        }
+
+        return $phone;
+    }
+
 
 
     /**

@@ -16,73 +16,17 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Rules\PhoneNumber;
 use App\Http\Controllers\Traits\HandlesImages;
+
 class DesignerController extends Controller
 {
     use HandlesImages;
+
     protected $mailinaboxService;
 
     public function __construct(MailinaboxService $mailinaboxService)
     {
         $this->mailinaboxService = $mailinaboxService;
     }
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => ['required', 'string', 'max:255', new PhoneNumber], // استخدام قاعدة التحقق المخصصة
-             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
-            'skills' => 'nullable|string',
-        ]);
-    
-        // Convert name to English if it is in Arabic
-        $nameInEnglish = ConversionHelper::convertNameToEnglish($validatedData['name']);
-    
-        // Generate email
-        $nameParts = explode(' ', $nameInEnglish);
-        $firstName = strtolower($nameParts[0]);
-        $lastName = strtolower(end($nameParts));
-        $email = $firstName . '.' . $lastName . '-designer@hadathah.org';
-    
-        $request->merge(['email' => $email]);
-        $request->validate([
-            'email' => 'required|string|email|max:255|unique:users',
-        ]);
-    
-        $validatedData['email'] = $email;
-    
-        // Generate password
-        $defaultPasswordPart = substr($validatedData['email'], 0, 5);
-        $password = $defaultPasswordPart . '@2024';
-    
-        // Create user
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => bcrypt($password),
-            'phone' => $validatedData['phone'],
-            'role_id' => 2
-        ]);
-    
-        // Create designer
-        $designer = Designer::create([
-            'user_id' => $user->id,
-            'name' => $validatedData['name'],
-            'phone' => $validatedData['phone'],
-            'skills' => $validatedData['skills'],
-        ]);
-    
-        if ($request->hasFile('image')) {
-            $this->handleImageUpload($request, $designer, 'public/designers');
-        }
-    
-        return response()->json([
-            'message' => 'Designer created successfully!',
-            'user' => $user,
-            'designer' => $designer
-        ]);
-    }
-    
-
 
     public function index()
     {
@@ -90,76 +34,112 @@ class DesignerController extends Controller
         return response()->json($designers);
     }
 
-    public function show($id)
+    public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => ['required', 'string', 'max:255', new PhoneNumber], 
+            'skills' => 'required|string|max:255',
+        ]);
 
-    }
+        $defaultPassword = 'defaultPassword123'; 
+        $emailBase = 'hadathah-user';
+        $emailDomain = '@hadathah.org';
 
-    public function edit($id)
-    {
+        DB::beginTransaction();
+        try {
+            $latestUser = User::where('email', 'LIKE', "$emailBase%")
+                              ->orderBy('email', 'desc')
+                              ->first();
 
-    }
-public function update(Request $request, $id)
-{
-    $validatedData = $request->validate([
-        'phone' => 'required|string|max:255|unique:designers,phone,' . $id,
-        'skills' => 'nullable|string',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
-    ]);
+            $nextNumber = $latestUser ? intval(str_replace([$emailBase, $emailDomain], '', $latestUser->email)) + 1 : 1;
+            $newEmail = $emailBase . sprintf('%04d', $nextNumber) . $emailDomain;
 
-    $designer = Designer::findOrFail($id);
-    $user = $designer->user;
+            $user = User::create([
+                'name' => $validatedData['name'],
+                'email' => $newEmail,
+                'password' => Hash::make($defaultPassword),
+                'phone' => $validatedData['phone'],
+                'role_id' => 2 
+            ]);
 
-    $designer->update([
-        'phone' => $validatedData['phone'],
-        'skills' => $validatedData['skills'],
-    ]);
+            $designer = Designer::create([
+                'user_id' => $user->id,
+                'name' => $validatedData['name'],
+                'phone' => $validatedData['phone'],
+                'skills' => $validatedData['skills'],
+            ]);
 
-    // Handle image upload
-    if ($request->hasFile('image')) {
-        $this->handleImageUpload($request, $designer, 'public/designers');
-    }
-    return response()->json([
-        'message' => 'Designer updated successfully!',
-        'designer' => $designer
-    ]);
-}
-
-
-public function destroy($id): JsonResponse
-{
-    DB::beginTransaction();
-
-    try {
-        $designer = Designer::findOrFail($id);
-
-        // Get the associated user
-        $user = User::findOrFail($designer->user_id);
-
-        // Delete the designer's image if it exists
-        if ($designer->image) {
-            $oldImagePath = str_replace('/storage', 'public', $designer->image);
-            if (Storage::exists($oldImagePath)) {
-                $deleted = Storage::delete($oldImagePath);
-                if (!$deleted) {
-                    DB::rollBack();
-                    return response()->json(['message' => 'Error deleting the image.'], 500);
-                }
+            if ($request->hasFile('image')) {
+                $this->handleImageUpload($request, $designer, 'public/designers/');
             }
+
+            DB::commit();
+            return response()->json(['message' => 'Designer created successfully!', 'user' => $user, 'designer' => $designer]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to create Designer and user.'], 500);
         }
-
-        // Delete the designer
-        $designer->delete();
-
-        // Delete the associated user
-        $user->delete();
-
-        DB::commit();
-
-        return response()->json(['message' => 'Designer, associated user, and image deleted successfully.']);
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json(['message' => 'Error occurred while deleting designer and user: ' . $e->getMessage()], 500);
     }
-}
+    public function update(Request $request, $id)
+    {
+        $designer = Designer::findOrFail($id); // Ensure designer exists
+
+        $validatedData = $request->validate([
+            'phone' => [
+                'required',
+                'string',
+                'max:255',
+                new PhoneNumber($designer->id, ['designers' => 'ignore']) // Ignoring this designer's ID
+            ],
+            'skills' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Update the designer with the validated data
+            $designer->update([
+                'phone' => $validatedData['phone'],
+                'skills' => $validatedData['skills']
+            ]);
+
+            // Handle image upload if there's a new image file
+            if ($request->hasFile('image')) {
+                $this->handleImageUpload($request, $designer, 'public/designers');
+            }
+
+            DB::commit();
+            return response()->json([
+                'message' => 'Designer updated successfully!',
+                'designer' => $designer
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Failed to update designer', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function destroy($id): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $designer = Designer::findOrFail($id);
+            $user = User::findOrFail($designer->user_id);
+
+            if ($designer->image) {
+                $this->deleteImage($designer->image);
+            }
+
+            $designer->delete();
+            $user->delete();
+
+            DB::commit();
+            return response()->json(['message' => 'Designer, associated user, and image deleted successfully.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error occurred while deleting designer and user: ' . $e->getMessage()], 500);
+        }
+    }
 }

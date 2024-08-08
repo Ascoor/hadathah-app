@@ -60,6 +60,18 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'add', 'section' => 'Categories'],
             ['name' => 'update', 'section' => 'Categories'],
             ['name' => 'delete', 'section' => 'Categories'],
+            ['name' => 'show', 'section' => 'Invoices'],
+            ['name' => 'add', 'section' => 'Invoices'],
+            ['name' => 'update', 'section' => 'Invoices'],
+            ['name' => 'delete', 'section' => 'Invoices'],
+            ['name' => 'show', 'section' => 'Payments'],
+            ['name' => 'add', 'section' => 'Payments'],
+            ['name' => 'update', 'section' => 'Payments'],
+            ['name' => 'delete', 'section' => 'Payments'],
+            ['name' => 'show', 'section' => 'Reports'],
+            ['name' => 'add', 'section' => 'Reports'],
+            ['name' => 'update', 'section' => 'Reports'],
+            ['name' => 'delete', 'section' => 'Reports'],
         ];
 
         foreach ($permissions as $permission) {

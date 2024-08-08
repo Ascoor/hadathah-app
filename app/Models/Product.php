@@ -25,6 +25,10 @@ public function orders()
 {
     return $this->belongsToMany(Order::class, 'order_details');
 }
-
+  // Relationship to InvoiceDetails
+  public function invoiceDetails()
+  {
+      return $this->hasMany(InvoiceDetail::class, 'product_id', 'product_id');
+  }
 
 }
