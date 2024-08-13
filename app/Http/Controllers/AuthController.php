@@ -12,81 +12,81 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Mail\Message;
+
 class AuthController extends Controller
 {
     public function register(Request $request)
-{
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|min:6',
-    ]);
-    
-    $activationCode = Str::random(30); // Generate a random activation code
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+        ]);
+
+        $activationCode = Str::random(30); // Generate a random activation code
 
 
-    $user = User::create([
-        'name' => $validatedData['name'],
-        'email' => $validatedData['email'],
-        'password' => Hash::make($validatedData['password']),
-        'role_id' => 5, // تعيين الدور بقيمة 5 بشكل افتراضي
-        'activation_code' => $activationCode, // حفظ رمز التفعيل
-    ]);
+        $user = User::create([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password']),
+            'role_id' => 5, // تعيين الدور بقيمة 5 بشكل افتراضي
+            'activation_code' => $activationCode, // حفظ رمز التفعيل
+        ]);
 
-    // Sending activation email
-    Mail::to($user->email)->send(new ActivationEmail($user));
+        // Sending activation email
+        Mail::to($user->email)->send(new ActivationEmail($user));
 
-    return response(['message' => 'success']);
-}
-public function activateAccount($code)
-{
-    $user = User::where('activation_code', $code)->first();
-
-    if (!$user) {
-        return response(['message' => 'Invalid activation code'], 404);
+        return response(['message' => 'success']);
     }
+    public function activateAccount($code)
+    {
+        $user = User::where('activation_code', $code)->first();
 
-    $user->activation_code = null;
-    $user->is_active = true; // Make sure to add is_active to the fillable array if used
-    $user->save();
+        if (!$user) {
+            return response(['message' => 'Invalid activation code'], 404);
+        }
+
+        $user->activation_code = null;
+        $user->is_active = true; // Make sure to add is_active to the fillable array if used
+        $user->save();
 
 
-    // Redirect to a specific URL in the frontend
-    return redirect()->away('https://app.hadathah.org/done-activation');
-
-}
-public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'email|required',
-        'password' => 'required'
-    ]);
-
-    $user = User::with('role', 'permissions')  // جلب المستخدم مع دوره وصلاحياته
-              ->where('email', $request->email)
-              ->whereNull('activation_code')
-              ->first();
-
-    if (!$user) {
-        return response()->json(['message' => 'هذا البريد ليس مسجل كمستخدم أو لم يتم تفعيل الحساب بعد'], 404);
+        // Redirect to a specific URL in the frontend
+        return redirect()->away('https://app.hadathah.org/done-activation');
     }
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'email|required',
+            'password' => 'required'
+        ]);
 
-    if (!auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-        return response()->json(['message' => 'هناك خطأ في كلمة المرور أعد إدخال كلمة المرور وحاول مرة أخرى'], 401);
+        $user = User::with('role', 'permissions')  // جلب المستخدم مع دوره وصلاحياته
+            ->where('email', $request->email)
+            ->whereNull('activation_code')
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'هذا البريد ليس مسجل كمستخدم أو لم يتم تفعيل الحساب بعد'], 404);
+        }
+
+        if (!auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json(['message' => 'هناك خطأ في كلمة المرور أعد إدخال كلمة المرور وحاول مرة أخرى'], 401);
+        }
+
+        $accessToken = auth()->user()->createToken('authToken')->accessToken;
+
+        $roleName = auth()->user()->role ? auth()->user()->role->name : 'No Role Assigned';
+        $permissions = auth()->user()->permissions ? auth()->user()->permissions->toArray() : [];
+
+        return response([
+            'user' => auth()->user(),
+            'role' => $roleName,
+            'permissions' => $permissions,
+            'access_token' => $accessToken
+        ]);
     }
-
-    $accessToken = auth()->user()->createToken('authToken')->accessToken;
-
-    $roleName = auth()->user()->role ? auth()->user()->role->name : 'No Role Assigned';
-    $permissions = auth()->user()->permissions ? auth()->user()->permissions->toArray() : [];
-
-    return response([
-        'user' => auth()->user(),
-        'role' => $roleName,
-        'permissions' => $permissions,
-        'access_token' => $accessToken
-    ]);
-}
 
 
 
@@ -98,66 +98,66 @@ public function login(Request $request)
         return response(['message' => 'You have been successfully logged out!'], 200);
     }
     public function sendResetLinkEmail(Request $request)
-{
-    $request->validate(['email' => 'required|email']);
+    {
+        $request->validate(['email' => 'required|email']);
 
-    $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-    if (!$user) {
-        return response()->json(['message' => 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني.'], 404);
+        if (!$user) {
+            return response()->json(['message' => 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني.'], 404);
+        }
+
+        $token = Str::random(60);
+        $expiresAt = now()->addHour(); // تعيين صلاحية الرمز إلى ساعة واحدة
+        $user->update(['reset_token' => $token, 'reset_token_expires_at' => $expiresAt]);
+
+        $resetUrl = "https://app.hadathah.org/reset-password?token=$token";
+
+        Mail::to($user->email)->send(new ResetPasswordMail($resetUrl));
+
+        return response()->json(['message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.']);
+    }
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $user = User::where('reset_token', $request->token)
+            ->where('reset_token_expires_at', '>', now())
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'رمز إعادة تعيين كلمة المرور غير صالح أو منتهي.'], 400);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->reset_token = null;
+        $user->reset_token_expires_at = null;
+        $user->save();
+
+        return response()->json(['message' => 'تم إعادة تعيين كلمة المرور بنجاح.']);
     }
 
-    $token = Str::random(60);
-    $expiresAt = now()->addHour(); // تعيين صلاحية الرمز إلى ساعة واحدة
-    $user->update(['reset_token' => $token, 'reset_token_expires_at' => $expiresAt]);
+    public function sendUserResetLinkEmail(Request $request)
+    {
+        $request->validate(['user_id' => 'required|exists:users,id']);
 
-    $resetUrl = "https://app.hadathah.org/reset-password?token=$token";
+        $user = User::where('id', $request->user_id)->first();
 
-    Mail::to($user->email)->send(new ResetPasswordMail($resetUrl));
+        if (!$user) {
+            return response()->json(['message' => 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني.'], 404);
+        }
 
-    return response()->json(['message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.']);
-}
-public function resetPassword(Request $request)
-{
-    $request->validate([
-        'token' => 'required',
-        'password' => 'required|min:6|confirmed',
-    ]);
+        $token = Str::random(60);
+        $expiresAt = now()->addHour(); // تعيين صلاحية الرمز إلى ساعة واحدة
+        $user->update(['reset_token' => $token, 'reset_token_expires_at' => $expiresAt]);
 
-    $user = User::where('reset_token', $request->token)
-                ->where('reset_token_expires_at', '>', now())
-                ->first();
+        $resetUrl = "https://app.hadathah.org/reset-password?token=$token";
 
-    if (!$user) {
-        return response()->json(['message' => 'رمز إعادة تعيين كلمة المرور غير صالح أو منتهي.'], 400);
+        Mail::to($user->email)->send(new ResetPasswordMail($resetUrl));
+
+        return response()->json(['message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.']);
     }
-
-    $user->password = Hash::make($request->password);
-    $user->reset_token = null;
-    $user->reset_token_expires_at = null;
-    $user->save();
-
-    return response()->json(['message' => 'تم إعادة تعيين كلمة المرور بنجاح.']);
-}
-
-public function sendUserResetLinkEmail(Request $request)
-{
-    $request->validate(['user_id' => 'required|exists:users,id']);
-
-    $user = User::where('id', $request->user_id)->first();
-
-    if (!$user) {
-        return response()->json(['message' => 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني.'], 404);
-    }
-
-    $token = Str::random(60);
-    $expiresAt = now()->addHour(); // تعيين صلاحية الرمز إلى ساعة واحدة
-    $user->update(['reset_token' => $token, 'reset_token_expires_at' => $expiresAt]);
-
-    $resetUrl = "https://app.hadathah.org/reset-password?token=$token";
-
-    Mail::to($user->email)->send(new ResetPasswordMail($resetUrl));
-
-    return response()->json(['message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.']);
-}
 }

@@ -90,7 +90,7 @@ class DesignerController extends Controller
                 'required',
                 'string',
                 'max:255',
-                new PhoneNumber($designer->id, ['designers' => 'ignore']) // Ignoring this designer's ID
+                new PhoneNumber($designer->id) // Ignoring this designer's ID
             ],
             'skills' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:1024',
