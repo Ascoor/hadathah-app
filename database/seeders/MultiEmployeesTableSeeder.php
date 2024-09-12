@@ -25,7 +25,7 @@ class MultiEmployeesTableSeeder extends Seeder
                 'user_id' => 3,
                 'name' => 'مها السبيعي',
                 'phone' => '01000551144',
-                'email' => NULL,
+                
                 'image' => '/storage/multi-employees/iwo15LfBmOf3RcSrxaEILmGshXHbzWDCFWsaO4LZ.png',
                 'employee_position' => 'المالك',
                 'created_at' => '2024-07-20 19:30:20',
@@ -37,7 +37,7 @@ class MultiEmployeesTableSeeder extends Seeder
                 'user_id' => 7,
                 'name' => 'عبدالحميد',
                 'phone' => '01002949195',
-                'email' => NULL,
+                
                 'image' => '/storage/multi-employees/5M7FdIIX7to7U6iMhgaonv29BMF9u4jzaPUYP7Yx.jpg',
                 'employee_position' => 'مدير',
                 'created_at' => '2024-07-22 06:31:01',
