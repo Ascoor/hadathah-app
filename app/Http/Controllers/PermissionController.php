@@ -37,14 +37,15 @@ class PermissionController extends Controller
             $user->permissions()->attach($perm['permission_id'], ['enabled' => $perm['enabled']]);
         }
     
-        // جمع الصلاحيات المحدثة بعد الإضافة
-        $updatedPermissions = $user->permissions()->pluck('name');
+        // جمع الصلاحيات المحدثة بعد الإضافة، بما في ذلك الاسم والقسم
+        $updatedPermissions = $user->permissions()->get(['name', 'section']); // جمع الاسم والقسم
     
-        // إطلاق الحدث بعد التحديث
+        // إطلاق الحدث بعد التحديث مع تضمين الاسم والقسم
         event(new UserPermissionsUpdated($user->id, $updatedPermissions));
     
         return response()->json(['message' => 'Permissions updated successfully!']);
     }
+    
     
 
     public function getPermissions($userId)
