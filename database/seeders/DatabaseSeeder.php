@@ -30,5 +30,8 @@ class DatabaseSeeder extends Seeder
         
         // Optionally, output the results of the Passport install to the console
         echo Artisan::output();
-   }
+       $this->call(CustomersTableSeeder::class);
+        $this->call(RolePermissionTableSeeder::class);
+        $this->call(RoleUserTableSeeder::class);
+    }
 }
